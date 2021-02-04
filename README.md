@@ -1,2 +1,2 @@
 # socketAFP
-software for prosthetic socket building automated fiber placement machine
+Software for prosthetic socket building automated fiber placement machine
