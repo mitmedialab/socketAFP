@@ -28,12 +28,12 @@ enum state manDrive(enum state currentState) {
             break;
 
             // if current state is down - ignore
-        case down: newState = down;
-            break;
-
-            //if current state is up - ignore
-        case up: newState = up;
-            break;
+//        case down: newState = down;
+//            break;
+//
+//            //if current state is up - ignore
+//        case up: newState = up;
+//            break;
 
             // if current state is manual down - continue down, or stop
         case manDown:
@@ -170,3 +170,5 @@ enum state startStop(enum state currentState){
         return currentState;
     }
 }
+
+

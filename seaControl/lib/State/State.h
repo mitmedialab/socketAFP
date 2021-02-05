@@ -13,10 +13,11 @@ enum state {
     axisInitComplete, //3
     goToStart, // 4
     idle,  // 5
-    down,  // 6
-    up,    // 7
+    //down,  // 6
+    //up,    // 7
     manUp, // 8
-    manDown //9
+    manDown, //9
+    pleaseGoToPos // 10
 
 };
 

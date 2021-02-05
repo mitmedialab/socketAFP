@@ -51,21 +51,27 @@ void setup()
     SEAstate = stopped;
 
     SEAMotor.motorControlInit(yPWM, yEnable, yDirection);
+    Serial.println("seriously wtf 1");
 }
 
 //////////////////////////////////////////////////////////////////
 //  Main loop
 // everything happens here
 //////////////////////////////////////////////////////////////////
+bool printedIdle = false;
+bool printedStop = false;
+
 void loop() {
 
     // check if the limit switch is hit
     SEAstate = checkLimits(SEAstate);
     SEAstate = startStop(SEAstate);
+    unsigned long loopStartTime = millis();
 
 
     //read encoders
     long yEncPos = yEnc.read();
+    //Serial.println(yEncPos);
     if(yEncOld != yEncPos){
         //Serial.println(yEncPos);
         yEncOld = yEncPos;
@@ -74,10 +80,16 @@ void loop() {
 
     // behavior when the machine is in a stopped state
     switch (SEAstate){
+
         case stopped:
             SEAMotor.driveYMotor(0, false, yEncPos);
             // check the manual drive buttons
             //SEAstate = manDrive(SEAstate);
+
+            if(!printedStop){
+                Serial.println("stopped");
+                printedStop = true;
+            }
             SEAstate = idle;
 
             break;
@@ -85,6 +97,12 @@ void loop() {
         case idle:
             // check the manual drive buttons
             SEAstate = manDrive(SEAstate);
+
+            if(!printedStop){
+                Serial.println("stopped");
+                printedStop = true;
+            }
+
             break;
 
             //move up, manual
@@ -112,7 +130,7 @@ void loop() {
             }
                 // move onto next state
             else {
-                SEAstate = idle;
+                SEAstate = pleaseGoToPos;
             }
             break;
         case goToStart:
@@ -135,14 +153,37 @@ void loop() {
             delay(100);
             firstInit = true;
             yEnc.write(0);
-            SEAstate = start;
+
+            SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
+            yEncPos = yEnc.read();
+            while(yEncPos > -2000){
+                yEncPos = yEnc.read();
+                Serial.println(yEncPos);
+                // do nothing, keep driving;
+            }
+            SEAMotor.driveYMotor(0, false, yEncPos);
+            delay(1000);
+            //SEAstate = start;
+            SEAstate = pleaseGoToPos;
+            Serial.println("seriously wtf 2");
+            Serial.println(SEAstate);
+            printedStop = false;
+            printedIdle = false;
             break;
 
-        case down:
-            break;
-        case up:
+        case pleaseGoToPos:
+            yEncPos = yEnc.read();
+            SEAstate = SEAMotor.pdControl(-7000, yEncPos, loopStartTime, manDownSpeed);
+
             break;
 
+        default:
+            SEAstate = stopped;
+            break;
 
     }
+
+
+
 }
+

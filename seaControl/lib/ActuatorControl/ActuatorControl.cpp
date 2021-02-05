@@ -55,10 +55,37 @@ void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
         }
     }
 
-
     //write the values to the motor
     analogWrite(pwmPin, pwm);
     digitalWrite(enablePin, enable);
     digitalWrite(dirPin, mDirection);
-    Serial.println(pwm);
+    //Serial.println(pwm);
+}
+
+enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, long currentTime, int basePWM) {
+    enum state actuatorState;
+    //yEncPos = yEnc.read();
+    pError = double(desiredPosition - yEncoderPos);
+    dError = (pError - dError) /  double(currentTime);
+    int setPWM =0;
+
+    if(true){
+
+        int pTerm = int(pGain * pError);
+        int dTerm = int(dGain * dError);
+        setPWM = pTerm + dTerm;
+        if(abs(pError) > 3000 && setPWM > basePWM + 5){
+            setPWM = basePWM + 5;
+        }
+
+        driveYMotor(setPWM, true, yEncoderPos);
+        String printString = "pwm: " + String(basePWM) + ", desired pwm: " + String(setPWM) + ", encoder: " + String(yEncoderPos) +
+                ", error: " + String(pError);
+        Serial.println(printString);
+        actuatorState = pleaseGoToPos;
+    }
+    else{
+        actuatorState = stopped;
+    }
+    return actuatorState;
 }
