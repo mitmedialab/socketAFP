@@ -2,11 +2,12 @@
 #include <../lib/Encoder/Encoder.h>
 #include <SeaControl.H>
 #include <../lib/State/State.h>
-#include "../lib/SEAMotorControl/SEAMotorControl.h"
 #include "../lib/DualMC33926MotorShield/DualMC33926MotorShield.h"
 #include "../lib/ButtonBehavior/ButtonBehavior.h"
+#include "../lib/ActuatorControl/ActuatorControl.h"
+
 DualMC33926MotorShield md;
-SEAMotorControl openControl;
+ActuatorControl SEAMotor;
 
 enum state SEAstate = stopped;
 
@@ -48,6 +49,8 @@ void setup()
     pinMode(yEncIndex, INPUT);
     pinMode(SEAEncIndex, INPUT);
     SEAstate = stopped;
+
+    SEAMotor.motorControlInit(yPWM, yEnable, yDirection);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -72,7 +75,7 @@ void loop() {
     // behavior when the machine is in a stopped state
     switch (SEAstate){
         case stopped:
-            openControl.driveYMotor(0, false, yEncPos);
+            SEAMotor.driveYMotor(0, false, yEncPos);
             // check the manual drive buttons
             //SEAstate = manDrive(SEAstate);
             SEAstate = idle;
@@ -87,14 +90,14 @@ void loop() {
             //move up, manual
         case manUp:
             // drive motor: slowUp, enabled, up
-            openControl.driveYMotor(manUpSpeed, true, yEncPos);
+            SEAMotor.driveYMotor(manUpSpeed, true, yEncPos);
             SEAstate = manDrive(SEAstate);
             break;
 
             // move down, manual
         case manDown:
             // drive motor, slowDown, enabled, down
-            openControl.driveYMotor(manDownSpeed, true, yEncPos);
+            SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
             SEAstate = manDrive(SEAstate);
             break;
 
@@ -117,18 +120,18 @@ void loop() {
 
             // this will run until the stage hits the limit switch.
         case axisInit:
-            openControl.driveYMotor(initUpSpeed, true, yEncPos);
+            SEAMotor.driveYMotor(initUpSpeed, true, yEncPos);
             break;
 
             // once a limit switch is hit
             // motor will stop, then restart and move slowly up against the hardstop
             // will resend system to start state.
         case axisInitComplete:
-            openControl.driveYMotor(0, false, yEncPos);
+            SEAMotor.driveYMotor(0, false, yEncPos);
             delay(500);
-            openControl.driveYMotor(touchHardStop, true, yEncPos);
+            SEAMotor.driveYMotor(touchHardStop, true, yEncPos);
             delay(500);
-            openControl.driveYMotor(0, false, yEncPos);
+            SEAMotor.driveYMotor(0, false, yEncPos);
             delay(100);
             firstInit = true;
             yEnc.write(0);

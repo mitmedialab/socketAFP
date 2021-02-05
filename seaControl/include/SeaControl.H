@@ -10,9 +10,9 @@
 //pin initaializations:
 
 // maxon motor pins
-//const int yPWM = 6;
-//const int yEnable = 5;
-//const int yDirection = 4;
+const uint8_t  yPWM = 6;
+const uint8_t  yEnable = 5;
+const uint8_t  yDirection = 4;
 
 
 // limit switch pins

@@ -1,13 +1,17 @@
 //
-// Created by Biomech on 2/3/2021.
+// Created by Biomech on 2/5/2021.
 //
 
-#include "SEAMotorControl.h"
-#include "Arduino.h"
+#include "ActuatorControl.h"
 
-// function to move the motor for the SEA
-// motor controller behaves weirdly when pwm is below 3
-void SEAMotorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos) {
+void ActuatorControl::motorControlInit(uint8_t pwm, uint8_t enable, uint8_t direction) {
+    pwmPin = pwm;
+    enablePin = enable;
+    dirPin = direction;
+
+}
+
+void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos) {
     int pwm;
     bool mDirection; // false is down, true is up
 
@@ -53,8 +57,8 @@ void SEAMotorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
 
 
     //write the values to the motor
-    analogWrite(yPWM, pwm);
-    digitalWrite(yEnable, enable);
-    digitalWrite(yDirection, mDirection);
+    analogWrite(pwmPin, pwm);
+    digitalWrite(enablePin, enable);
+    digitalWrite(dirPin, mDirection);
     Serial.println(pwm);
 }
