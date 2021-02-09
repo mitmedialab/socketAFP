@@ -68,6 +68,7 @@ void loop() {
     SEAstate = startStop(SEAstate);
     unsigned long loopStartTime = millis();
 
+  // Serial.println(SEAstate);
 
     //read encoders
     long yEncPos = yEnc.read();
@@ -165,6 +166,7 @@ void loop() {
             delay(1000);
             //SEAstate = start;
             SEAstate = pleaseGoToPos;
+            stateStart = millis();
             Serial.println("seriously wtf 2");
             Serial.println(SEAstate);
             printedStop = false;
@@ -172,8 +174,27 @@ void loop() {
             break;
 
         case pleaseGoToPos:
+
             yEncPos = yEnc.read();
-            SEAstate = SEAMotor.pdControl(-7000, yEncPos, loopStartTime, manDownSpeed);
+            SEAstate = SEAMotor.pdControl(-15000, yEncPos, loopStartTime, manDownSpeed, SEAstate);
+
+            long stateTime = millis() - stateStart;
+            if(stateTime > 1500 ){
+                SEAstate = posTwo;
+                stateStart = millis();
+            }
+
+            break;
+
+        case posTwo:
+            yEncPos = yEnc.read();
+            SEAstate = SEAMotor.pdControl(-8000, yEncPos, loopStartTime, manDownSpeed, SEAstate);
+
+            stateTime = millis() - stateStart;
+            Serial.println(stateTime);
+            if(stateTime > 1500 ){
+                SEAstate = stopped;
+            }
 
             break;
 
@@ -183,7 +204,7 @@ void loop() {
 
     }
 
-
-
 }
+
+
 

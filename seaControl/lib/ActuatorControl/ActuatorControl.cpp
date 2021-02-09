@@ -20,23 +20,30 @@ void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
         pwm = motorSpeed;
         mDirection = true;
     }
-
         // go down
     else if(motorSpeed <= -3){
         pwm = abs(motorSpeed);
         mDirection = false;
     }
-
         // close to 0, up
     else if(motorSpeed  < 3 && motorSpeed >= 0){
         pwm =3;
         mDirection = true;
     }
-
         // close to 0, down
     else if(motorSpeed  > -3 && motorSpeed < 0){
         pwm =3;
         mDirection = false;
+    }
+    else if(motorSpeed < -228){
+        pwm = 228;
+        mDirection = false;
+    }
+
+    else if(motorSpeed > 228){
+        pwm = 228;
+        mDirection = true;
+
     }
 
     // slow down if its close to a button
@@ -62,30 +69,46 @@ void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
     //Serial.println(pwm);
 }
 
-enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, long currentTime, int basePWM) {
+enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, long currentTime, int basePWM, enum state currentState) {
     enum state actuatorState;
     //yEncPos = yEnc.read();
     pError = double(desiredPosition - yEncoderPos);
     dError = (pError - dError) /  double(currentTime);
+    iError = (pError + iError) * currentTime;
+    if(abs(iError) > 2000){
+        if(iError > 0){
+            iError = 2000;
+        }
+        else{
+            iError = -2000;
+        }
+    }
     int setPWM =0;
 
     if(true){
 
         int pTerm = int(pGain * pError);
         int dTerm = int(dGain * dError);
+        int iTerm = int(iGain * iError);
         setPWM = pTerm + dTerm;
-        if(abs(pError) > 3000 && setPWM > basePWM + 5){
-            setPWM = basePWM + 5;
+
+        if(setPWM > 0){
+            setPWM = setPWM + 60;
         }
+//        if(abs(pError) > 3000 && setPWM > basePWM + 5){
+//            setPWM = basePWM + 5;
+//        }
 
         driveYMotor(setPWM, true, yEncoderPos);
         String printString = "pwm: " + String(basePWM) + ", desired pwm: " + String(setPWM) + ", encoder: " + String(yEncoderPos) +
-                ", error: " + String(pError);
+                ", error: " + String(pError) + " dError: " + String(dError) + " dTerm: " + String(dTerm) + " integral :"
+                + String(iError) + " iTerm: " + String(iTerm);
         Serial.println(printString);
-        actuatorState = pleaseGoToPos;
+        actuatorState = currentState;
     }
     else{
         actuatorState = stopped;
     }
     return actuatorState;
 }
+

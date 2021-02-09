@@ -17,7 +17,8 @@ enum state {
     //up,    // 7
     manUp, // 8
     manDown, //9
-    pleaseGoToPos // 10
+    pleaseGoToPos, // 10
+    posTwo
 
 };
 

@@ -47,7 +47,8 @@ Encoder SEAenc(SEAEncA, SEAEncB);
 //const int touchHardStop = 33; //32 is good at 12v
 const long encoderReInitThreshold = -2000;
 int testMotorSpeed = 30;
-
+unsigned long stateStart;
+const long stateLimit = 3000;
 long yEncOld =0;
 long SEAencOld = 0;
 //long buttonLockOut = 0;
@@ -62,5 +63,6 @@ struct controlError {
     float dError;
     float pwm;
 };
+
 
 
