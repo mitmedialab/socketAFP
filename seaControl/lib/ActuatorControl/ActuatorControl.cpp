@@ -69,6 +69,29 @@ void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
     //Serial.println(pwm);
 }
 
+// TODO: make init routine a function
+//void ActuatorControl::initYMotor(){
+//        driveYMotor(0, false, yEncPos);
+//        delay(500);
+//        driveYMotor(touchHardStop, true, yEncPos);
+//        delay(500);
+//        driveYMotor(0, false, yEncPos);
+//        delay(100);
+//        firstInit = true;
+//        yEnc.write(0);
+//
+//        driveYMotor(manDownSpeed, true, yEncPos);
+//        yEncPos = yEnc.read();
+//        while(yEncPos > -2000){
+//            yEncPos = yEnc.read();
+//            Serial.println(yEncPos);
+//            // do nothing, keep driving;
+//        }
+//        SEAMotor.driveYMotor(0, false, yEncPos);
+//        delay(1000);
+//
+//};
+
 enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, long currentTime, int basePWM, enum state currentState) {
     enum state actuatorState;
     //yEncPos = yEnc.read();

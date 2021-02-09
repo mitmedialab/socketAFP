@@ -34,6 +34,7 @@ class ActuatorControl {
 public:
     void motorControlInit(uint8_t pwm, uint8_t enable,uint8_t direction);
     void driveYMotor(int motorSpeed, bool enable, long yEncoderPos);
+    void initYMotor();
     enum state pdControl(long desiredPosition, long yEcoderPos, long currentTime, int basePWM, enum state currentState);
 };
 

@@ -30,4 +30,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(Z_DUMMY_TARGET ${SRC_LIST} include/SeaControl.H lib/State/State.cpp lib/State/State.h lib/ButtonBehavior/ButtonBehavior.cpp lib/ButtonBehavior/ButtonBehavior.h lib/ActuatorControl/ActuatorControl.cpp lib/ActuatorControl/ActuatorControl.h)
+add_executable(Z_DUMMY_TARGET ${SRC_LIST} include/SeaControl.H lib/State/State.cpp lib/State/State.h lib/ButtonBehavior/ButtonBehavior.cpp lib/ButtonBehavior/ButtonBehavior.h lib/ActuatorControl/ActuatorControl.cpp lib/ActuatorControl/ActuatorControl.h lib/serialComs/SerialComs.cpp lib/serialComs/SerialComs.h)

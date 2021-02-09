@@ -5,9 +5,10 @@
 #include "../lib/DualMC33926MotorShield/DualMC33926MotorShield.h"
 #include "../lib/ButtonBehavior/ButtonBehavior.h"
 #include "../lib/ActuatorControl/ActuatorControl.h"
-
+#include "../lib/SerialComs/SerialComs.h"
 DualMC33926MotorShield md;
 ActuatorControl SEAMotor;
+SerialComs incoming;
 
 enum state SEAstate = stopped;
 
@@ -102,6 +103,13 @@ void loop() {
             if(!printedStop){
                 Serial.println("stopped");
                 printedStop = true;
+            }
+
+            if(Serial.available()){
+                incoming.checkSerial();
+                if(incoming.checkComplete()) {
+                    Serial.println(incoming.getMessage());
+                }
             }
 
             break;
