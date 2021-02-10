@@ -5,7 +5,8 @@
 #include "../lib/DualMC33926MotorShield/DualMC33926MotorShield.h"
 #include "../lib/ButtonBehavior/ButtonBehavior.h"
 #include "../lib/ActuatorControl/ActuatorControl.h"
-#include "../lib/SerialComs/SerialComs.h"
+#include "../lib/serialComs/SerialComs.h"
+
 DualMC33926MotorShield md;
 ActuatorControl SEAMotor;
 SerialComs incoming;

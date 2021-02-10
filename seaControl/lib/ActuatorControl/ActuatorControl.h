@@ -6,6 +6,7 @@
 #define SEACONTROL_ACTUATORCONTROL_H
 
 #include "../State/State.h"
+
 #include "Arduino.h"
 
 // global variable initializations
