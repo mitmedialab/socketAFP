@@ -53,6 +53,7 @@ class JsonSerializer : public Visitor<size_t> {
     }
 
     write('}');
+    write(' \n');
     return bytesWritten();
   }
 

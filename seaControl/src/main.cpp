@@ -118,7 +118,9 @@ void loop() {
             if(Serial.available()){
                 incoming.checkSerial();
                 if(incoming.checkComplete()) {
+                    Serial.println("the message is:");
                     Serial.println(incoming.getMessage());
+                    Serial.println("It worked");
                 }
             }
 
