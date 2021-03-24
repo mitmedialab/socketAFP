@@ -6,22 +6,22 @@
 #define SEACONTROL_ACTUATORCONTROL_H
 
 #include "../State/State.h"
-
+#include "../SerialComs/SerialComs.h"
 #include "Arduino.h"
 
 // global variable initializations
 const int stoppedSpeed = 0;
-//const int manUpSpeed = 35; //80 is good at 12v
-//const int manDownSpeed = -29;  //-50 is good at 12v
-//const int initUpSpeed = 33;  //40 is good at 12v
-//const int touchHardStop = 33; //32 is good at 12v
-const int manUpSpeed = 100; //80 is good at 12v
-const int manDownSpeed = -50;  //-50 is good at 12v
-const int initUpSpeed = 95;  //40 is good at 12v
-const int touchHardStop = 90; //32 is good at 12v
+const int manUpSpeed = 50; //80 is good at 12v
+const int manDownSpeed = -48;  //-50 is good at 12v
+const int initUpSpeed = 48;  //40 is good at 12v
+const int touchHardStop = 40; //32 is good at 12v
+//const int manUpSpeed = 100; //80 is good at 12v
+//const int manDownSpeed = -50;  //-50 is good at 12v
+//const int initUpSpeed = 95;  //40 is good at 12v
+//const int touchHardStop = 90; //32 is good at 12v
 const int errorThreshold = 100;
 //const int yEncA = 2;
-const double pGain = 0.05;
+const double pGain = 0.01;
 const double dGain = 100;
 const double iGain = 0.01;
 class ActuatorControl {
@@ -37,6 +37,7 @@ public:
     void driveYMotor(int motorSpeed, bool enable, long yEncoderPos);
     void initYMotor();
     enum state pdControl(long desiredPosition, long yEcoderPos, long currentTime, int basePWM, enum state currentState);
+    SerialComs outGoingMsgs;
 };
 
 #endif //SEACONTROL_ACTUATORCONTROL_H

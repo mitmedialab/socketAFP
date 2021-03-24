@@ -5,9 +5,10 @@
 #ifndef SEACONTROL_SERIALCOMS_H
 #define SEACONTROL_SERIALCOMS_H
 #include <Arduino.h>
-#include "../nlohmann/json.hpp"
+#include "../ArduinoJson/ArduinoJson.h"
+#include "../State/State.h"
 
-using json = nlohmann::json;
+
 
 class SerialComs {
 
@@ -15,11 +16,17 @@ public:
     void checkSerial();
     bool checkComplete();
     String getMessage();
-    json incomingmsg;
+//    json incomingmsg;
+    StaticJsonDocument<200> doc;
+    void motorState(enum state currentState, long encoderVal, long error, int setPWM, int pTerm, double pError, int dTerm,
+            double dError, int iTerm, double iError);
+    void generalMessage(enum state currentState, String message);
+    void sendJson();
 private:
     bool stringComplete = false;
     String newMsg = "";
-    json j;
+//    json j;
+
 };
 
 

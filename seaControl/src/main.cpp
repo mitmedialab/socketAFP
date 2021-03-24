@@ -1,15 +1,17 @@
 #include <Arduino.h>
-#include <../lib/Encoder/Encoder.h>
+//#include <../lib/Encoder/Encoder.h>
 #include <SeaControl.H>
 #include <../lib/State/State.h>
 #include "../lib/DualMC33926MotorShield/DualMC33926MotorShield.h"
 #include "../lib/ButtonBehavior/ButtonBehavior.h"
 #include "../lib/ActuatorControl/ActuatorControl.h"
 #include "../lib/serialComs/SerialComs.h"
+#include "../lib/QuadEncoder/QuadEncoder.h"
 
 DualMC33926MotorShield md;
 ActuatorControl SEAMotor;
 SerialComs incoming;
+SerialComs outgoing;
 
 enum state SEAstate = stopped;
 
@@ -29,9 +31,17 @@ void stopIfFault()
 
 void setup()
 {
+    SEAstate = inSetup;
     Serial.begin(115200);
-    Serial.println("Dual MC33926 Motor Shield");
-    md.init();
+//    outgoing.generalMessage(SEAstate, "dual motor shield init");
+    //Serial.println("Dual MC33926 Motor Shield");
+//    md.init();
+
+    yEnc.setInitConfig();
+    yEnc.init();
+    yEnc.write(0);
+
+
 
     //SEA Motor setup
     pinMode(yPWM, OUTPUT);
@@ -53,7 +63,8 @@ void setup()
     SEAstate = stopped;
 
     SEAMotor.motorControlInit(yPWM, yEnable, yDirection);
-    Serial.println("seriously wtf 1");
+    outgoing.generalMessage(SEAstate, "end setup");
+
 }
 
 //////////////////////////////////////////////////////////////////
@@ -70,16 +81,12 @@ void loop() {
     SEAstate = startStop(SEAstate);
     unsigned long loopStartTime = millis();
 
-  // Serial.println(SEAstate);
-
     //read encoders
     long yEncPos = yEnc.read();
-    //Serial.println(yEncPos);
     if(yEncOld != yEncPos){
-        //Serial.println(yEncPos);
+
         yEncOld = yEncPos;
     }
-
 
     // behavior when the machine is in a stopped state
     switch (SEAstate){
@@ -90,7 +97,8 @@ void loop() {
             //SEAstate = manDrive(SEAstate);
 
             if(!printedStop){
-                Serial.println("stopped");
+                //outgoing.generalMessage(SEAstate, "stopped");
+                //Serial.println("stopped");
                 printedStop = true;
             }
             SEAstate = idle;
@@ -102,7 +110,8 @@ void loop() {
             SEAstate = manDrive(SEAstate);
 
             if(!printedStop){
-                Serial.println("stopped");
+                outgoing.generalMessage(SEAstate, "stopped");
+//                Serial.println("stopped");
                 printedStop = true;
             }
 
@@ -149,6 +158,7 @@ void loop() {
             // this will run until the stage hits the limit switch.
         case axisInit:
             SEAMotor.driveYMotor(initUpSpeed, true, yEncPos);
+            outgoing.generalMessage(SEAstate, "axis init");
             break;
 
             // once a limit switch is hit
@@ -163,21 +173,20 @@ void loop() {
             delay(100);
             firstInit = true;
             yEnc.write(0);
-
+            delay(100);
             SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
             yEncPos = yEnc.read();
             while(yEncPos > -2000){
                 yEncPos = yEnc.read();
-                Serial.println(yEncPos);
                 // do nothing, keep driving;
             }
             SEAMotor.driveYMotor(0, false, yEncPos);
             delay(1000);
             //SEAstate = start;
             SEAstate = pleaseGoToPos;
+            //SEAstate = stopped;
             stateStart = millis();
-            Serial.println("seriously wtf 2");
-            Serial.println(SEAstate);
+            outgoing.generalMessage(SEAstate, "axis init complete");
             printedStop = false;
             printedIdle = false;
             break;
@@ -185,11 +194,11 @@ void loop() {
         case pleaseGoToPos:
 
             yEncPos = yEnc.read();
-            SEAstate = SEAMotor.pdControl(-15000, yEncPos, loopStartTime, manDownSpeed, SEAstate);
+            SEAstate = SEAMotor.pdControl(-7000, yEncPos, loopStartTime, manDownSpeed, SEAstate);
 
             long stateTime = millis() - stateStart;
-            if(stateTime > 1500 ){
-                SEAstate = posTwo;
+            if(stateTime > 3000 ){
+                SEAstate = stopped;
                 stateStart = millis();
             }
 
@@ -197,12 +206,14 @@ void loop() {
 
         case posTwo:
             yEncPos = yEnc.read();
-            SEAstate = SEAMotor.pdControl(-8000, yEncPos, loopStartTime, manDownSpeed, SEAstate);
+            SEAstate = SEAMotor.pdControl(-5000, yEncPos, loopStartTime, manDownSpeed, SEAstate);
 
             stateTime = millis() - stateStart;
             Serial.println(stateTime);
             if(stateTime > 1500 ){
                 SEAstate = stopped;
+                printedStop = false;
+                printedIdle = false;
             }
 
             break;

@@ -4,6 +4,7 @@
 
 #include "ActuatorControl.h"
 
+
 void ActuatorControl::motorControlInit(uint8_t pwm, uint8_t enable, uint8_t direction) {
     pwmPin = pwm;
     enablePin = enable;
@@ -36,7 +37,7 @@ void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
         mDirection = false;
     }
     else if(motorSpeed < -228){
-        pwm = 228;
+        pwm = -228;
         mDirection = false;
     }
 
@@ -66,7 +67,7 @@ void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
     analogWrite(pwmPin, pwm);
     digitalWrite(enablePin, enable);
     digitalWrite(dirPin, mDirection);
-    //Serial.println(pwm);
+//    outGoingMsgs.generalMessage(1, String(yEncoderPos));
 }
 
 // TODO: make init routine a function
@@ -113,25 +114,25 @@ enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, lo
         int pTerm = int(pGain * pError);
         int dTerm = int(dGain * dError);
         int iTerm = int(iGain * iError);
-        setPWM = pTerm + dTerm;
+        setPWM = pTerm + dTerm + iTerm;
 
-        if(setPWM > 0){
-            setPWM = setPWM + 60;
-        }
+//        if(setPWM > 0){
+//            setPWM = setPWM + 60;
+//        }
 //        if(abs(pError) > 3000 && setPWM > basePWM + 5){
 //            setPWM = basePWM + 5;
 //        }
 
         driveYMotor(setPWM, true, yEncoderPos);
-        String printString = "pwm: " + String(basePWM) + ", desired pwm: " + String(setPWM) + ", encoder: " + String(yEncoderPos) +
-                ", error: " + String(pError) + " dError: " + String(dError) + " dTerm: " + String(dTerm) + " integral :"
-                + String(iError) + " iTerm: " + String(iTerm);
-        Serial.println(printString);
+
+        outGoingMsgs.motorState(currentState, yEncoderPos, pError, setPWM, pTerm, pError, dTerm, dError, iTerm, iError);
         actuatorState = currentState;
+
     }
     else{
         actuatorState = stopped;
     }
     return actuatorState;
 }
+
 

@@ -7,17 +7,18 @@
 
 
 enum state {
-    stopped,  // 0
-    start,    // 1
-    axisInit, // 2
-    axisInitComplete, //3
-    goToStart, // 4
-    idle,  // 5
-    //down,  // 6
-    //up,    // 7
-    manUp, // 8
-    manDown, //9
-    pleaseGoToPos, // 10
+    inSetup,    // 0
+    stopped,  // 1
+    start,    // 3
+    axisInit, // 3
+    axisInitComplete, //4
+    goToStart, // 5
+    idle,  // 6
+    //down,  // 7
+    //up,    // 8
+    manUp, // 9
+    manDown, //10
+    pleaseGoToPos, // 11
     posTwo
 
 };

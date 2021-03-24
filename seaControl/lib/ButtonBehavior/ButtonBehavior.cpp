@@ -4,10 +4,11 @@
 #include "Arduino.h"
 #include "ButtonBehavior.h"
 
+#include "../serialComs/SerialComs.h"
 // mini state machine for determining what to do when
 // the manual drive buttons are pressed
 //
-
+SerialComs buttonDebug;
 enum state manDrive(enum state currentState) {
     bool upButton = !digitalRead(manUpButton);
     bool downButton = !digitalRead(manDownButton);
@@ -78,8 +79,11 @@ enum state checkLimits(enum state currentState){
     // read the buttons
     boolean upLimit = !digitalRead(yUpLimitButtonPin);
     boolean downLimit = !digitalRead(yDownLimitButtonPin);
+
+
     //when the up limit switch is hit
     if(upLimit){
+        //buttonDebug.generalMessage(currentState, String(upLimit));
         switch(currentState){
             case manUp:
                 newState = stopped;
@@ -88,6 +92,7 @@ enum state checkLimits(enum state currentState){
                 // ignore
                 break;
             case axisInit:
+                buttonDebug.generalMessage(currentState, "limit pressed?");
                 newState = axisInitComplete;
                 break;
             case axisInitComplete:
@@ -105,6 +110,7 @@ enum state checkLimits(enum state currentState){
     }
     // when the down limit switch is hit
     if(downLimit){
+        buttonDebug.generalMessage(currentState, String(downLimit));
         switch(currentState){
             case manUp:
                 // ignore

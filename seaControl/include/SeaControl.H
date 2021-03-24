@@ -6,13 +6,13 @@
 #define SEACONTROL_SEACONTROL_H
 
 #endif //SEACONTROL_SEACONTROL_H
-
+#include "../lib/QuadEncoder/QuadEncoder.h"
 //pin initaializations:
 
 // maxon motor pins
-const uint8_t  yPWM = 6;
-const uint8_t  yEnable = 5;
-const uint8_t  yDirection = 4;
+const uint8_t  yPWM = 25;
+const uint8_t  yEnable = 24;
+const uint8_t  yDirection = 12;
 
 
 // limit switch pins
@@ -26,17 +26,22 @@ const uint8_t  yDirection = 4;
 
 //y encoder pins
 // encoder is 2000 Lines per inch, 7 inches long
-const int yEncIndex = 22; //at 0.5 in
-const int yEncA = 2;
-const int yEncB = 3;
+const int yEncIndex = 29; //at 0.5 in
+const int yEncA = 4;
+const int yEncB = 5;
 
 //sea encoder pins
-const int SEAEncIndex = 28; //at 0.5 in
-const int SEAEncA = 20;
-const int SEAEncB = 21;
+const int SEAEncIndex = 32; //at 0.5 in
+const int SEAEncA = 31;
+const int SEAEncB = 30;
 //encoder initializations
-Encoder yEnc(yEncA, yEncB);
-Encoder SEAenc(SEAEncA, SEAEncB);
+QuadEncoder yEnc(1, yEncA, yEncB);
+QuadEncoder SEAenc(2, SEAEncA, SEAEncB);
+
+
+
+//Encoder yEnc(yEncA, yEncB);
+//Encoder SEAenc(SEAEncA, SEAEncB);
 
 //
 // global variable initializations

@@ -2,13 +2,11 @@ import sys
 import serial
 import time
 import threading
+import json
 import typing
-import msgpack
-from queue import Queue
 
-global inputQ
-global serQ
-global serShutdown
+from ast import literal_eval
+from queue import Queue
 
 inputQ = Queue()
 serQ = Queue()
@@ -28,7 +26,6 @@ def input_listener():
 			print("want to quit")
 
 		inputQ.put(clInput)
-		# qInput.put(input)
 		print("input added to Queue")
 
 
@@ -36,6 +33,11 @@ def input_listener():
 # Grab serial data and put into q
 # ###
 def ser_handler(ser: serial.Serial):
+	"""
+	grab grab the serial data and put it into a q
+	:param ser:
+	:return:
+	"""
 	print("serial q")
 	is_open = ser.is_open
 	if is_open:
@@ -44,7 +46,33 @@ def ser_handler(ser: serial.Serial):
 			# this is faster than serial.readline
 			# reads however many bytes are waiting in buffer
 			if 0 < ser.in_waiting:
-				serQ.put(ser.read(ser.in_waiting))
+				incoming = ser.read(ser.in_waiting)
+				"""
+				incoming serial needs to be converted from b'' to string
+				then string needs to be broken into a list of string to convert it to a json string. 
+				"""
+
+				incoming_string = incoming.decode("utf-8")
+				# print(incoming_string)
+				incoming_spaced = incoming_string.replace("}", "} \n")
+				incoming_list = incoming_spaced.split("\n")
+				for item in incoming_list:
+					if item == "":
+						pass
+					else:
+						# print(item)
+						try:
+							serQ.put(item)
+							# json_string = json.loads(item)
+							# serQ.put(json_string)
+
+						except:
+							print("couldnt load: ")
+							print(item)
+						# json_out = json.dumps(json_string, indent=4)
+						# print(json_out)
+
+
 
 			if 0 == ser.in_waiting:
 				if not serShutdown.empty():
@@ -58,9 +86,8 @@ def main():
 
 	# for instructions on opening the serial port check
 	# https://pythonhosted.org/pyserial/shortintro.html#opening-serial-ports
-	ser = serial.Serial('COM23', 115200) ## uncomment for windows, check com port with arduino or device manager
-	print("serialOpened")
-	# ser = serial.Serial('/dev/cu.usbmodem1101', 500000)
+	ser = serial.Serial('COM22', 115200)  # uncomment for windows, check com port with arduino or device manager
+	# ser = serial.Serial('/dev/cu.usbmodem1101', 115200) # uncomment for mac and check the port
 
 	##
 	# create threads
@@ -98,10 +125,9 @@ def main():
 		if not serQ.empty():
 			newSer = serQ.get()
 
-			unpacked = msgpack.unpackb(newSer, raw=False)
-			print(unpacked)
+			# print(newSer)
 
-			print(newSer)
+
 
 
 	# f.close()

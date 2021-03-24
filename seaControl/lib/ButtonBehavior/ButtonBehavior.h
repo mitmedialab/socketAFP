@@ -8,13 +8,13 @@
 #include "../State/State.h"
 
 // limit switch pins
-const int yUpLimitButtonPin = 15;
-const int yDownLimitButtonPin = 16;
+const int yUpLimitButtonPin = 33;
+const int yDownLimitButtonPin = 34;
 
 // UI button pins
-const int startStopButton = 17;
-const int manUpButton = 32;
-const int manDownButton = 33;
+const int startStopButton = 2;
+const int manUpButton = 1;
+const int manDownButton = 0;
 
 //long buttonLockOut = 0;
 
