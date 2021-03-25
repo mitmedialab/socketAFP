@@ -36,8 +36,15 @@ public:
     void motorControlInit(uint8_t pwm, uint8_t enable,uint8_t direction);
     void driveYMotor(int motorSpeed, bool enable, long yEncoderPos);
     void initYMotor();
+    void setGains(double p_gain_in, double d_gain_in, double i_gain_in);
     enum state pdControl(long desiredPosition, long yEcoderPos, long currentTime, int basePWM, enum state currentState);
     SerialComs outGoingMsgs;
+
+private:
+    double p_gain = pGain;
+    double d_gain = dGain;
+    double i_gain = iGain;
+
 };
 
 #endif //SEACONTROL_ACTUATORCONTROL_H

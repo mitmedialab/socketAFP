@@ -111,9 +111,9 @@ enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, lo
 
     if(true){
 
-        int pTerm = int(pGain * pError);
-        int dTerm = int(dGain * dError);
-        int iTerm = int(iGain * iError);
+        int pTerm = int(p_gain * pError);
+        int dTerm = int(d_gain * dError);
+        int iTerm = int(d_gain * iError);
         setPWM = pTerm + dTerm + iTerm;
 
 //        if(setPWM > 0){
@@ -133,6 +133,13 @@ enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, lo
         actuatorState = stopped;
     }
     return actuatorState;
+}
+
+void ActuatorControl::setGains(double p_gain_in, double d_gain_in, double i_gain_in) {
+    p_gain = p_gain_in;
+    d_gain = d_gain_in;
+    i_gain = i_gain_in;
+
 }
 
 

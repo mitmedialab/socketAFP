@@ -4,7 +4,7 @@ import time
 import threading
 import json
 import typing
-
+from guiMain import GuiMain
 from ast import literal_eval
 from queue import Queue
 
@@ -105,6 +105,9 @@ def main():
 	####
 	# handle all the inputs continuously
 	####
+
+	new_gui = GuiMain()
+
 	while True:
 
 		# handle inputs from commandline

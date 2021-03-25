@@ -34,3 +34,4 @@
 # python 
 .idea 
 venv 
+__pycache__/
