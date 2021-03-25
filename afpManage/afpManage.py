@@ -5,6 +5,8 @@ import threading
 import json
 import typing
 from guiMain import GuiMain
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication
 from ast import literal_eval
 from queue import Queue
 
@@ -47,32 +49,34 @@ def ser_handler(ser: serial.Serial):
 			# reads however many bytes are waiting in buffer
 			if 0 < ser.in_waiting:
 				incoming = ser.read(ser.in_waiting)
+				serQ.put(incoming)
 				"""
 				incoming serial needs to be converted from b'' to string
 				then string needs to be broken into a list of string to convert it to a json string. 
 				"""
 
-				incoming_string = incoming.decode("utf-8")
+				# incoming_string = incoming.decode("utf-8")
+				# serQ.put(incoming_string)
 				# print(incoming_string)
-				incoming_spaced = incoming_string.replace("}", "} \n")
-				incoming_list = incoming_spaced.split("\n")
-				for item in incoming_list:
-					if item == "":
-						pass
-					else:
-						# print(item)
-						try:
-							serQ.put(item)
-							# json_string = json.loads(item)
-							# serQ.put(json_string)
-
-						except:
-							print("couldnt load: ")
-							print(item)
+				# print(incoming_string)
+				# incoming_spaced = incoming_string.replace("}", "} \n")
+				# incoming_list = incoming_spaced.split("\n")
+				# for item in incoming_list:
+				# 	if item == "":
+				# 		pass
+				# 	else:
+				# 		# print(item)
+				# 		try:
+				# 			serQ.put(item)
+				# 			print(item)
+				# 			# json_string = json.loads(item)
+				# 			# serQ.put(json_string)
+				#
+				# 		except:
+				# 			print("couldnt load: ")
+				# 			print(item)
 						# json_out = json.dumps(json_string, indent=4)
 						# print(json_out)
-
-
 
 			if 0 == ser.in_waiting:
 				if not serShutdown.empty():
@@ -81,6 +85,7 @@ def ser_handler(ser: serial.Serial):
 
 # def main(argv):
 def main():
+	afp_gui = GuiMain()
 	# file_name = str(sys.argv[1]) + str(time.time()) + '.csv'
 	# f = open(file_name, "w+")
 
@@ -92,6 +97,7 @@ def main():
 	##
 	# create threads
 	##
+
 	input_thread = threading.Thread(target=input_listener)
 	input_thread.setDaemon(True)
 	input_thread.start()
@@ -101,12 +107,16 @@ def main():
 	ser_thread.setDaemon(True)
 	ser_thread.start()
 
+	guiThread = threading.Thread(target=afp_gui.run)
+	guiThread.setDaemon(True)
+	guiThread.start()
+
 	print("threads created")
 	####
 	# handle all the inputs continuously
 	####
 
-	new_gui = GuiMain()
+
 
 	while True:
 
@@ -126,8 +136,10 @@ def main():
 
 		# handle inputs serial
 		if not serQ.empty():
-			newSer = serQ.get()
-
+			new_ser = serQ.get()
+			new_serial_string = new_ser.decode("utf-8")
+			afp_gui.update_terminal(new_serial_string)
+			# guiThread.update_terminal(newSer)
 			# print(newSer)
 
 

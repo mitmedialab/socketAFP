@@ -148,6 +148,7 @@ class WidgetGallery(QDialog):
 
         defaultPushButton = QPushButton("Default Push Button")
         defaultPushButton.setDefault(True)
+        defaultPushButton.clicked
 
         togglePushButton = QPushButton("Toggle Push Button")
         togglePushButton.setCheckable(True)
@@ -247,4 +248,6 @@ import sys
 app = QApplication(sys.argv)
 gallery = WidgetGallery()
 gallery.show()
-sys.exit(app.exec_())
+# sys.exit(app.exec_())
+app.exec_()
+print("hello world")
