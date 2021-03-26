@@ -199,7 +199,7 @@ void loop() {
             SEAstate = SEAMotor.pdControl(-7000, yEncPos, loopStartTime, manDownSpeed, SEAstate);
 
             long stateTime = millis() - stateStart;
-            if(stateTime > 3000 ){
+            if(stateTime > 1000 ){
                 SEAstate = stopped;
                 stateStart = millis();
             }

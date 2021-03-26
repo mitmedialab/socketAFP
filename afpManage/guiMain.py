@@ -3,21 +3,32 @@ from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QDateTimeEdit,
                              QDial, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
                              QProgressBar, QPushButton, QRadioButton, QScrollBar, QSizePolicy,
                              QSlider, QSpinBox, QStyleFactory, QTableWidget, QTabWidget, QTextEdit,
-                             QVBoxLayout, QWidget, QFormLayout)
+                             QVBoxLayout, QWidget, QFormLayout, QListWidget, QListWidgetItem)
+from PyQt5.QtCore import QTextStream, QTimer
+import  PyQt5.QtCore
+
 from messages import Messages
 from threading import Thread
+from dataQueues import DataQueue
+
+
 class GuiMain:
-
-    def __init__(self):
+    # def __init__(self, parent=None):
+    #     super(GuiMain, self).__init__(parent)
+    def __init__(self, incoming_data):
         print("here we go")
+        self.new_data = incoming_data
+        print("Created newdata attribute")
+        print("connected slot to the signal")
+        self.line_count = 0
 
-    def run(self):
+    def run(self, argv):
         # Thread.__init__(self)
         # super(GuiMain, self).__init__(parent)
 
         body = QGridLayout()
 
-        app = QApplication([])
+        app = QApplication([argv])
         window = QWidget()
         self.gains_input = QGroupBox("Group1")
         self.position_input = QGroupBox("group 2")
@@ -40,6 +51,11 @@ class GuiMain:
         main_layout.addWidget(self.position_input, 1, 0)
         main_layout.addWidget(self.terminal_box, 0, 1, 3, 1)
         main_layout.addWidget(self.send_box, 2, 0)
+
+        self.terminal_update_timer = QTimer()
+        # self.terminal_update_timer.singleShot(10000, self.update_terminal)
+        self.terminal_update_timer.timeout.connect(self.update_terminal)
+        self.terminal_update_timer.start(100)
         window.setLayout(main_layout)
         window.show()
         app.exec()
@@ -71,8 +87,8 @@ class GuiMain:
         self.position_input.setLayout(layout)
 
     def create_terminal(self):
-        self.terminal_window = QTextEdit()
-        self.terminal_window.setFixedWidth(400)
+        self.terminal_window = QListWidget()
+        self.terminal_window.setMinimumWidth(600)
         self.terminal_window.setFixedHeight(500)
 
         send_summary = QTextEdit()
@@ -146,9 +162,33 @@ class GuiMain:
     def on_clear_terminal(self):
         self.terminal_window.clear()
 
+    """
+        update_terminal is called on a timer
+        New items are added to data queue faster than can be added to the list view 
+        this will cause cause the program to hang, and also hang the microcontroller (which is weird) 
+        So this runs a loop for a portion of the timeout adding a bunch of items to the output display
+    """
     # function to update the terminal window
-    def update_terminal(self, new_line: str):
-        # self.terminal_window.append(new_line)
-        print(new_line)
+    # this function is called on a timer
+    def update_terminal(self):
 
-# new_gui = GuiMain()
+        try:
+
+            while self.terminal_update_timer.remainingTime() > 30:
+                if not self.new_data.data.empty():
+                    new_line = self.new_data.data.get()
+                    self.terminal_window.addItem(new_line)
+                    self.terminal_window.scrollToBottom()
+
+                    self.line_count += 1
+                    if self.line_count > 100:
+                        self.terminal_window.clear()
+                    self.new_data.data.task_done()
+
+        except Exception as e:
+            print(e)
+            print("couldnt add line")
+
+
+
+
