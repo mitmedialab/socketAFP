@@ -4,10 +4,14 @@ import json
 class Messages:
 
     def __init__(self):
-        self.goPosition = None
+        self.go_y_position = None
+        self.go_z_position = None
+        self.go_z_rotation = None
+        self.go_alpha_rotation = None
         self.pGain = None
         self.dGain = None
         self.iGain = None
+        self.destination = None
 
     def set_gain(self, pg: float, dg: float, ig: float):
         self.pGain = pg

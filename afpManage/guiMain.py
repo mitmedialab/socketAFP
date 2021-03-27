@@ -15,7 +15,7 @@ from dataQueues import DataQueue
 class GuiMain:
     # def __init__(self, parent=None):
     #     super(GuiMain, self).__init__(parent)
-    def __init__(self, incoming_data):
+    def __init__(self, incoming_data, out_data):
         print("here we go")
         self.new_data = incoming_data
         print("Created newdata attribute")
@@ -26,7 +26,7 @@ class GuiMain:
         # Thread.__init__(self)
         # super(GuiMain, self).__init__(parent)
 
-        body = QGridLayout()
+        # body = QGridLayout()
 
         app = QApplication([argv])
         window = QWidget()
@@ -88,8 +88,8 @@ class GuiMain:
 
     def create_terminal(self):
         self.terminal_window = QListWidget()
-        self.terminal_window.setMinimumWidth(600)
-        self.terminal_window.setFixedHeight(500)
+        self.terminal_window.setMinimumWidth(1000)
+        self.terminal_window.setMinimumHeight(1000)
 
         send_summary = QTextEdit()
         send_summary.setFixedHeight(200)
@@ -167,23 +167,19 @@ class GuiMain:
         New items are added to data queue faster than can be added to the list view 
         this will cause cause the program to hang, and also hang the microcontroller (which is weird) 
         So this runs a loop for a portion of the timeout adding a bunch of items to the output display
+        it is faster to put items in list and then add whole list to listWidget in one go. 
     """
-    # function to update the terminal window
-    # this function is called on a timer
     def update_terminal(self):
 
         try:
-
-            while self.terminal_update_timer.remainingTime() > 30:
+            update_items = list()
+            while self.terminal_update_timer.remainingTime() > 40:
                 if not self.new_data.data.empty():
-                    new_line = self.new_data.data.get()
-                    self.terminal_window.addItem(new_line)
-                    self.terminal_window.scrollToBottom()
-
-                    self.line_count += 1
-                    if self.line_count > 100:
-                        self.terminal_window.clear()
+                    update_items.append(self.new_data.data.get())
                     self.new_data.data.task_done()
+            if update_items:
+                self.terminal_window.addItems(update_items)
+                self.terminal_window.scrollToBottom()
 
         except Exception as e:
             print(e)

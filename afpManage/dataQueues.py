@@ -6,7 +6,6 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 # serShutdown = Queue()
 
 
-
 class DataQueue(QObject):
 
     queue_updated = pyqtSignal()

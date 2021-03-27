@@ -47,8 +47,9 @@ from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QDateTimeEdit,
                              QDial, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
                              QProgressBar, QPushButton, QRadioButton, QScrollBar, QSizePolicy,
                              QSlider, QSpinBox, QStyleFactory, QTableWidget, QTabWidget, QTextEdit,
-                             QVBoxLayout, QWidget)
+                             QVBoxLayout, QWidget, QListWidget)
 
+import time
 
 class WidgetGallery(QDialog):
     def __init__(self, parent=None):
@@ -80,6 +81,30 @@ class WidgetGallery(QDialog):
         disableWidgetsCheckBox.toggled.connect(self.topRightGroupBox.setDisabled)
         disableWidgetsCheckBox.toggled.connect(self.bottomLeftTabWidget.setDisabled)
         disableWidgetsCheckBox.toggled.connect(self.bottomRightGroupBox.setDisabled)
+
+
+        self.list_a = QListWidget()
+
+
+        my_list = list()
+
+        for i in range(0, 1000):
+            my_list.append(str(i))
+
+        start_time = time.time_ns()
+        for item in my_list:
+            self.list_a.addItem(item)
+        end_time = time.time_ns()
+
+        print(end_time - start_time)
+
+        self.list_a.clear()
+        print(len(my_list))
+        start_time = time.time_ns()
+        self.list_a.addItems(my_list)
+        end_time = time.time_ns()
+
+        print(end_time-start_time)
 
         topLayout = QHBoxLayout()
         topLayout.addWidget(styleLabel)

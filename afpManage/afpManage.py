@@ -65,7 +65,8 @@ def ser_handler(ser: serial.Serial):
 def main():
 
 	gui_send_queue = DataQueue()
-	afp_gui = GuiMain(gui_send_queue)
+	gui_response_queie = DataQueue()
+	afp_gui = GuiMain(gui_send_queue, gui_send_queue)
 
 	print("gui object created")
 	# file_name = str(sys.argv[1]) + str(time.time()) + '.csv'
