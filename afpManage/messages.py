@@ -9,6 +9,13 @@ class Messages:
         self.go_z_position = None
         self.go_z_rotation = None
         self.go_alpha_rotation = None
+
+        # by default axis movement is set to false.
+        self.move_y = False
+        self.move_z = False
+        self.rotate_z = False
+        self.rotate_alpha = False
+
         self.pGain = None
         self.dGain = None
         self.iGain = None
@@ -22,15 +29,19 @@ class Messages:
 
     def gui_update_y_position(self, y_pos: str):
         self.go_y_position = self.input_to_int(y_pos)
+        self.move_y = [False if self.go_y_position is None else True]
 
-    def gui_update_z_position(self, y_pos: str):
-        self.go_y_position = self.input_to_int(y_pos)
+    def gui_update_z_position(self, z_pos: str):
+        self.go_z_position = self.input_to_int(z_pos)
+        self.move_z = [False if self.go_z_position is None else True]
 
-    def gui_update_z_rotation(self, y_pos: str):
-        self.go_y_position = self.input_to_int(y_pos)
+    def gui_update_z_rotation(self, z_pos: str):
+        self.go_z_rotation = self.input_to_int(z_pos)
+        self.rotate_z = [False if self.go_z_rotation is None else True]
 
-    def gui_update_alpha_rotation(self, y_pos: str):
-        self.go_y_position = self.input_to_int(y_pos)
+    def gui_update_alpha_rotation(self, alpha_pos: str):
+        self.go_y_position = self.input_to_int(alpha_pos)
+        self.rotate_alpha = [False if self.go_alpha_rotation is None else True]
 
     # next two functions are for converting string inputs to numbers
     # necessary for handling bad inputs, like blank inputs
