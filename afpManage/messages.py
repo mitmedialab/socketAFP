@@ -1,4 +1,5 @@
 import json
+from enums import (Board, State)
 
 
 class Messages:
@@ -13,17 +14,49 @@ class Messages:
         self.iGain = None
         self.destination = None
 
-    def set_gain(self, pg: float, dg: float, ig: float):
-        self.pGain = pg
-        self.dGain = dg
-        self.iGain = ig
+    # setters... cause even though nothing is private, they are still useful
+    def gui_set_gain(self, pg: str, dg: str, ig: str):
+        self.pGain = self.input_to_float(pg)
+        self.dGain = self.input_to_float(dg)
+        self.iGain = self.input_to_float(ig)
 
-    def set_position(self, position: int):
-        self.goPosition = position
+    def gui_update_y_position(self, y_pos: str):
+        self.go_y_position = self.input_to_int(y_pos)
+
+    def gui_update_z_position(self, y_pos: str):
+        self.go_y_position = self.input_to_int(y_pos)
+
+    def gui_update_z_rotation(self, y_pos: str):
+        self.go_y_position = self.input_to_int(y_pos)
+
+    def gui_update_alpha_rotation(self, y_pos: str):
+        self.go_y_position = self.input_to_int(y_pos)
+
+    # next two functions are for converting string inputs to numbers
+    # necessary for handling bad inputs, like blank inputs
+    def input_to_float(self, input: str):
+        try:
+            converted = [None if input == '' else float(input)]
+            return converted
+        except Exception as e:
+            print("error: " + str(e) + " when converting " + input)
+            return None
+
+    def input_to_int(self, input: str):
+        try:
+            converted = [None if input == '' else int(input)]
+            return converted
+        except Exception as e:
+            print("error: " + str(e) + " when converting " + input)
+            return None
 
     def pack_json(self) -> str:
+        try:
+            json_string = json.dumps(self.__dict__) + '\n'
+            return json_string
+        except Exception as e:
+            print(e)
 
-        return json.dumps(self.__dict__)
 
 
 # def main():

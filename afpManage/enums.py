@@ -1,13 +1,14 @@
 import enum
+from enum import IntEnum
 
 
-class Board(enum.Enum):
+class Board:
 
     SEA = 1
     general = 2
 
 
-class State(enum.Enum):
+class State(IntEnum):
     inSetup = 0
     stopped = 1
     start = 2

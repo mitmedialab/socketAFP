@@ -8,6 +8,7 @@ from PyQt5.QtCore import QTextStream, QTimer
 import  PyQt5.QtCore
 
 from messages import Messages
+from enums import (Board, State)
 from threading import Thread
 from dataQueues import DataQueue
 
@@ -90,9 +91,10 @@ class GuiMain:
         self.terminal_window = QListWidget()
         self.terminal_window.setMinimumWidth(1000)
         self.terminal_window.setMinimumHeight(1000)
+        self.terminal_window.verticalScrollBar().setSingleStep(2)
 
-        send_summary = QTextEdit()
-        send_summary.setFixedHeight(200)
+        self.send_summary = QTextEdit()
+        self.send_summary.setFixedHeight(200)
 
         clear_windows = QPushButton("clear terminals")
         clear_windows.clicked.connect(self.on_clear_terminal)
@@ -103,7 +105,7 @@ class GuiMain:
 
         layout = QGridLayout()
         layout.addWidget(self.terminal_window)
-        layout.addWidget(send_summary)
+        layout.addWidget(self.send_summary)
         layout.addWidget(clear_windows)
         layout.addWidget(connect_sea)
         layout.addWidget(connect_general)
@@ -129,16 +131,19 @@ class GuiMain:
 
         self.send_box.setLayout(layout)
 
-    def read_sea_inputs(self):
+    def read_sea_inputs(self) -> Messages:
         y_position = self.y_position_input.text()
         p_gain = self.p_gain_input.text()
         i_gain = self.i_gain_input.text()
         d_gain = self.d_gain_input.text()
 
-        print(y_position)
-        print(p_gain)
-        print(i_gain)
-        print(d_gain)
+        SEA_message = Messages()
+        SEA_message.destination = Board.SEA
+        SEA_message.gui_set_gain(p_gain, d_gain, i_gain)
+        SEA_message.gui_update_y_position(y_position)
+
+        return SEA_message
+
 
     def read_general_inputs(self):
         z_rot = self.z_rotation_input.text()
@@ -150,7 +155,10 @@ class GuiMain:
         print(alpha_rot)
 
     def on_send_sea_click(self):
-        self.read_sea_inputs()
+        SEA_send = self.read_sea_inputs()
+        print(SEA_send)
+        print(SEA_send.__dict__)
+        self.send_summary.append(SEA_send.pack_json())
 
     def on_general_click(self):
         self.read_general_inputs()
@@ -175,8 +183,9 @@ class GuiMain:
             update_items = list()
             while self.terminal_update_timer.remainingTime() > 40:
                 if not self.new_data.data.empty():
-                    update_items.append(self.new_data.data.get())
+                    update_items.append(str(self.line_count) + ' ' + self.new_data.data.get())
                     self.new_data.data.task_done()
+                    self.line_count += 1
             if update_items:
                 self.terminal_window.addItems(update_items)
                 self.terminal_window.scrollToBottom()
