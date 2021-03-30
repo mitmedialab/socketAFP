@@ -16,9 +16,10 @@ from dataQueues import DataQueue
 class GuiMain:
     # def __init__(self, parent=None):
     #     super(GuiMain, self).__init__(parent)
-    def __init__(self, incoming_data, out_data):
+    def __init__(self, incoming_data: DataQueue, out_data: DataQueue):
         print("here we go")
         self.new_data = incoming_data
+        self.out_data = out_data
         print("Created newdata attribute")
         print("connected slot to the signal")
         self.line_count = 0
@@ -56,7 +57,7 @@ class GuiMain:
         self.terminal_update_timer = QTimer()
         # self.terminal_update_timer.singleShot(10000, self.update_terminal)
         self.terminal_update_timer.timeout.connect(self.update_terminal)
-        self.terminal_update_timer.start(100)
+        self.terminal_update_timer.start(200)
         window.setLayout(main_layout)
         window.show()
         app.exec()
@@ -144,24 +145,28 @@ class GuiMain:
 
         return SEA_message
 
-
-    def read_general_inputs(self):
+    def read_general_inputs(self) -> Messages:
         z_rot = self.z_rotation_input.text()
         z_pos = self.z_position_input.text()
         alpha_rot = self.alpha_rotation_input.text()
 
-        print(z_rot)
-        print(z_pos)
-        print(alpha_rot)
+        general_message = Messages()
+        general_message.destination = Board.general
+        general_message.gui_update_z_rotation(z_rot)
+        general_message.gui_update_z_position(z_pos)
+        general_message.gui_update_alpha_rotation(alpha_rot)
+
+        return general_message
 
     def on_send_sea_click(self):
         SEA_send = self.read_sea_inputs()
-        print(SEA_send)
-        print(SEA_send.__dict__)
         self.send_summary.append(SEA_send.pack_json())
+        self.out_data.data.put(SEA_send)
 
     def on_general_click(self):
-        self.read_general_inputs()
+        general_send = self.read_general_inputs()
+        self.send_summary.append(general_send.pack_json())
+        self.out_data.data.put(general_send)
 
     def on_all_click(self):
         self.read_sea_inputs()
@@ -181,10 +186,10 @@ class GuiMain:
 
         try:
             update_items = list()
-            while self.terminal_update_timer.remainingTime() > 40:
+            while self.terminal_update_timer.remainingTime() > 60:
                 if not self.new_data.data.empty():
                     update_items.append(str(self.line_count) + ' ' + self.new_data.data.get())
-                    self.new_data.data.task_done()
+                    # self.new_data.data.task_done()
                     self.line_count += 1
             if update_items:
                 self.terminal_window.addItems(update_items)

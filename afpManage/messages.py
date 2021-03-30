@@ -68,7 +68,12 @@ class Messages:
         except Exception as e:
             print(e)
 
-
+    def pack_byte_array(self) -> bytearray:
+        try:
+            json_bytes = bytearray((json.dumps(self.__dict__) + '\n'), 'utf-8')
+            return json_bytes
+        except Exception as e:
+            print(e)
 
 # def main():
 #     newMessage = Messages()
