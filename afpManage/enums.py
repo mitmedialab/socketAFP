@@ -16,9 +16,7 @@ class State(IntEnum):
     axisInitComplete = 4
     goToStart = 5
     idle = 6
-    down = 7
-    up = 8
-    manUp = 9
-    manDown = 10
-    pleaseGoToPos = 11
-    posTwo = 12
+    manUp = 7
+    manDown = 8
+    GoToPos = 9
+    posTwo = 10

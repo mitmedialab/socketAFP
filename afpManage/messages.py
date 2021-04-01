@@ -9,7 +9,7 @@ class Messages:
         self.go_z_position = None
         self.go_z_rotation = None
         self.go_alpha_rotation = None
-
+        self.state = None
         # by default axis movement is set to false.
         self.move_y = False
         self.move_z = False
@@ -30,6 +30,7 @@ class Messages:
     def gui_update_y_position(self, y_pos: str):
         self.go_y_position = self.input_to_int(y_pos)
         self.move_y = [False if self.go_y_position is None else True]
+        self.state = [State.GoToPos if self.move_y else State.idle]
 
     def gui_update_z_position(self, z_pos: str):
         self.go_z_position = self.input_to_int(z_pos)

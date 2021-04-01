@@ -98,9 +98,11 @@ def main():
 
 	SEA_serial = serial.Serial('COM22', 115200)  # uncomment for windows, check com port with arduino or device manager
 	# ser = serial.Serial('/dev/cu.usbmodem1101', 115200) # uncomment for mac and check the port
-
-	general_serial = serial.Serial('COM15', 115200)
-
+	general_serial = None
+	try:
+		general_serial = serial.Serial('COM15', 115200)
+	except Exception as e:
+		print(e)
 
 	##
 	# create threads

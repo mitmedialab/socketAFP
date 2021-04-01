@@ -119,7 +119,8 @@ void loop() {
                 incoming.checkSerial();
                 if(incoming.checkComplete()) {
                     Serial.println("the message is:");
-                    Serial.println(incoming.getMessage());
+//                    Serial.println(incoming.getMessage());
+                    incoming.readIncomingJson();
                     Serial.println("It worked");
                 }
             }
@@ -151,7 +152,7 @@ void loop() {
             }
                 // move onto next state
             else {
-                SEAstate = pleaseGoToPos;
+                SEAstate = GoToPos;
             }
             break;
         case goToStart:
@@ -185,7 +186,7 @@ void loop() {
             SEAMotor.driveYMotor(0, false, yEncPos);
             delay(1000);
             //SEAstate = start;
-            SEAstate = pleaseGoToPos;
+            SEAstate = GoToPos;
             //SEAstate = stopped;
             stateStart = millis();
             outgoing.generalMessage(SEAstate, "axis init complete");
@@ -193,7 +194,7 @@ void loop() {
             printedIdle = false;
             break;
 
-        case pleaseGoToPos:
+        case GoToPos:
 
             yEncPos = yEnc.read();
             SEAstate = SEAMotor.pdControl(-7000, yEncPos, loopStartTime, manDownSpeed, SEAstate);

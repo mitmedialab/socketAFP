@@ -1,5 +1,5 @@
 //
-// Created by Biomech on 2/3/2021.
+// Created by Aaron Jaeger on 2/3/2021.
 //
 
 #ifndef SEACONTROL_STATE_H
@@ -18,7 +18,7 @@ enum state {
     //up,    // 8
     manUp, // 9
     manDown, //10
-    pleaseGoToPos, // 11
+    GoToPos, // 11
     posTwo
 
 };
@@ -28,9 +28,20 @@ enum state {
 
 class State {
 //public:
-
+private:
+    enum state myState;
+    long SEADestinationPosition;
+    long globalDestinationPosition;
+    bool move;
+public:
+    void createState(enum state setState);
+    void goToGlobalPos(long position, float pGain, float iGain, float dGain, int baseSpeed);
+    void goToSEAPos(long position, float pGain, float iGain, float dGain, int baseSpeed);
+    enum state getState();
+    long getSEADest();
+    long getGlobalDest();
+    void setMove(bool toMoveOrNotToMove);
+    bool getMove();
 };
-
-
 
 #endif //SEACONTROL_STATE_H

@@ -17,12 +17,20 @@ public:
     bool checkComplete();
     String getMessage();
 //    json incomingmsg;
-    StaticJsonDocument<200> doc;
+
+    void readIncomingJson();
     void motorState(enum state currentState, long encoderVal, long error, int setPWM, int pTerm, double pError, int dTerm,
             double dError, int iTerm, double iError);
     void generalMessage(enum state currentState, String message);
     void sendJson();
+    State getState();
+
 private:
+    StaticJsonDocument<200> doc;
+    StaticJsonDocument<2048> incoming;
+
+    void generateState();
+    State messageState;
     bool stringComplete = false;
     String newMsg = "";
 //    json j;
