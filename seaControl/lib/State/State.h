@@ -5,6 +5,7 @@
 #ifndef SEACONTROL_STATE_H
 #define SEACONTROL_STATE_H
 
+#include "Arduino.h"
 
 enum state {
     inSetup,    // 0
@@ -16,15 +17,13 @@ enum state {
     idle,  // 6
     //down,  // 7
     //up,    // 8
-    manUp, // 9
-    manDown, //10
-    GoToPos, // 11
-    posTwo
+    manUp, // 7
+    manDown, //8
+    GoToPos, // 9
+    anotherState
+//    posTwo
 
 };
-
-//volatile extern state SEAstate = stopped;
-//enum state SEAstate = stopped;
 
 class State {
 //public:
@@ -33,8 +32,9 @@ private:
     long SEADestinationPosition;
     long globalDestinationPosition;
     bool move;
+    long stateStartTime;
 public:
-    void createState(enum state setState);
+    void setState(enum state setState);
     void goToGlobalPos(long position, float pGain, float iGain, float dGain, int baseSpeed);
     void goToSEAPos(long position, float pGain, float iGain, float dGain, int baseSpeed);
     enum state getState();
@@ -42,6 +42,7 @@ public:
     long getGlobalDest();
     void setMove(bool toMoveOrNotToMove);
     bool getMove();
+    long getStateStartTime();
 };
 
 #endif //SEACONTROL_STATE_H

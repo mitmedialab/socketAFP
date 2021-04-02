@@ -18,8 +18,8 @@ void SerialComs::checkSerial() {
 }
 
 bool SerialComs::checkComplete() {
-    if(stringComplete){
-        stringComplete = false;
+    if(this->stringComplete){
+        this->stringComplete = false;
         return true;
     }
     else {
@@ -36,7 +36,7 @@ String SerialComs::getMessage() {
 }
 
 void SerialComs::readIncomingJson(){
-    String rawMsg = this->getMessage();
+    String rawMsg = this->getMessage(); //gets the message and clears the stored message.
     Serial.print("the raw message is: ");
     Serial.println(rawMsg);
     DeserializationError error = deserializeJson(incoming, rawMsg);
@@ -48,19 +48,14 @@ void SerialComs::readIncomingJson(){
 
     this->generateState();
     this->incoming.clear();
-    Serial.println(this->messageState.getMove());
 }
 
-//void SerialComs::motorState(enum state currentState, long encoderVal, long error) {
-//    this->doc["state"] = currentState;
-//    this->doc["encoder"] = encoderVal;
-//    this->doc["error"]  = error;
-//    sendJson();
-//}
-
 void SerialComs::sendJson() {
+    this->doc["msgID"] = this->msgID;
+    this->msgID++;
     serializeJson(this->doc, Serial);
     this->doc.clear();
+
 }
 
 void SerialComs::generalMessage(enum state currentState, String message) {
@@ -92,7 +87,7 @@ void SerialComs::generateState() {
     float iGain = incoming["iGain"][0];
     float dGain = incoming["dGain"][0];
     boolean move = incoming["move_y"][0];
-    this->messageState.createState(tempState);
+    this->messageState.setState(tempState);
     this->messageState.setMove(move);
     this->messageState.goToGlobalPos(position, pGain, iGain, dGain, 0);
 }

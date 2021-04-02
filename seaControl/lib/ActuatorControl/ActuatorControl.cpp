@@ -114,8 +114,8 @@ enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, lo
         int pTerm = int(p_gain * pError);
         int dTerm = int(d_gain * dError);
         int iTerm = int(d_gain * iError);
-        setPWM = pTerm + dTerm + iTerm;
-
+//        setPWM = pTerm + dTerm + iTerm;
+        setPWM = pTerm + dTerm;
 //        if(setPWM > 0){
 //            setPWM = setPWM + 60;
 //        }
@@ -125,7 +125,7 @@ enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, lo
 
         driveYMotor(setPWM, true, yEncoderPos);
 
-        outGoingMsgs.motorState(currentState, yEncoderPos, pError, setPWM, pTerm, pError, dTerm, dError, iTerm, iError);
+//        outGoingMsgs.motorState(currentState, yEncoderPos, pError, setPWM, pTerm, pError, dTerm, dError, iTerm, iError);
         actuatorState = currentState;
 
     }

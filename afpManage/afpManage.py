@@ -14,9 +14,9 @@ from dataQueues import DataQueue
 from messages import Messages
 from enums import Board
 
-inputQ = multiprocessing.Queue()
-serQ = multiprocessing.Queue()
-serShutdown = multiprocessing.Queue()
+inputQ = Queue()
+serQ = Queue()
+serShutdown = Queue()
 
 
 def input_listener():
@@ -54,6 +54,7 @@ def ser_handler(ser: serial.Serial):
 			if 0 < ser.in_waiting:
 				incoming = ser.read(ser.in_waiting)
 				serQ.put(incoming)
+				serQ
 				"""
 				incoming serial needs to be converted from b'' to string
 				then string needs to be broken into a list of string to convert it to a json string. 
@@ -62,6 +63,7 @@ def ser_handler(ser: serial.Serial):
 			if 0 == ser.in_waiting:
 				if not serShutdown.empty():
 					break
+
 
 
 def serial_sender(SEA_port: serial.Serial, general_port: serial.Serial, outgoing_queue: DataQueue):
@@ -160,7 +162,7 @@ def main():
 			if "q" == new_input:
 				serShutdown.put("q")
 				time.sleep(1)
-				ser.close()
+				SEA_serial.close()
 				break
 			else:
 				print(new_input)
@@ -174,16 +176,17 @@ def main():
 			try:
 				new_serial_string = new_ser.decode("utf-8")
 				gui_send_queue.data.put(new_serial_string)
-				gui_send_queue.data.put(new_serial_string)
+
+
 				# gui_send_queue.queue_update()
 			except Exception as e:
 				print(e)
 				# print("couldnt decode line")
 				print(new_ser)
-
+			serQ.task_done()
 
 	# f.close()
-	ser.close()
+	SEA_serial.close()
 
 
 # main(sys.argv)

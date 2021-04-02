@@ -33,7 +33,8 @@ private:
     State messageState;
     bool stringComplete = false;
     String newMsg = "";
-//    json j;
+    uint32_t msgID = 0;
+
 
 };
 

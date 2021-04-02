@@ -21,7 +21,7 @@ class DataQueue(QObject):
     def __init__(self):
         QObject.__init__(self)
         # multiprocessing queue seems to work better, but I could also just be imagining it...
-        self.data = multiprocessing.Queue()
+        self.data = Queue()
 
     def queue_update(self):
         self.queue_updated.emit()

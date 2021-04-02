@@ -4,12 +4,18 @@
 
 #include "State.h"
 
-void State::createState(enum state setState) {
+
+void State::setState(enum state setState) {
+    if(setState != this->myState){
+        stateStartTime = millis();
+    }
+
     this->myState = setState;
+
 }
 
 void State::goToGlobalPos(long position, float pGain, float iGain, float dGain, int baseSpeed) {
-
+    this->globalDestinationPosition = position;
 }
 
 void State::goToSEAPos(long position, float pGain, float iGain, float dGain, int baseSpeed) {
@@ -36,5 +42,9 @@ bool State::getMove() {
 
 void State::setMove(bool toMoveOrNotToMove) {
     this->move = toMoveOrNotToMove;
+}
+
+long State::getStateStartTime() {
+    return stateStartTime;
 }
 

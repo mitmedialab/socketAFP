@@ -186,10 +186,10 @@ class GuiMain:
 
         try:
             update_items = list()
-            while self.terminal_update_timer.remainingTime() > 60:
+            while self.terminal_update_timer.remainingTime() > 70:
                 if not self.new_data.data.empty():
                     update_items.append(str(self.line_count) + ' ' + self.new_data.data.get())
-                    # self.new_data.data.task_done()
+                    self.new_data.data.task_done()
                     self.line_count += 1
             if update_items:
                 self.terminal_window.addItems(update_items)
