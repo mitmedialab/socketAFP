@@ -41,6 +41,12 @@ void setup()
     yEnc.init();
     yEnc.write(0);
 
+    SEAenc.setInitConfig();
+    SEAenc.EncConfig.revolutionCountCondition = DISABLE;
+    SEAenc.EncConfig.enableModuloCountMode = DISABLE;
+    SEAenc.init();
+    SEAenc.write(0);
+
     //SEA Motor setup
     pinMode(yPWM, OUTPUT);
     pinMode(yEnable, OUTPUT);
@@ -83,9 +89,15 @@ void loop() {
 
     //read encoders
     long yEncPos = yEnc.read();
+    long SEAEncPos = SEAenc.read();
     if(yEncOld != yEncPos){
-
         yEncOld = yEncPos;
+    }
+
+    if(SEAencOld != SEAEncPos){
+        SEAencOld = SEAEncPos;
+        outgoing.generalMessage(SEAstate.getState(), String(SEAEncPos));
+
     }
 
     // behavior when the machine is in a stopped state
@@ -134,8 +146,8 @@ void loop() {
         case manUp:
             // drive motor: slowUp, enabled, up
             SEAMotor.driveYMotor(manUpSpeed, true, yEncPos);
-
             SEAstate.setState(manDrive(SEAstate.getState()));
+//            outgoing.generalMessage(SEAstate.getState(), String(yEncPos));
             break;
 
             // move down, manual
@@ -143,6 +155,7 @@ void loop() {
             // drive motor, slowDown, enabled, down
             SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
             SEAstate.setState( manDrive(SEAstate.getState()));
+//            outgoing.generalMessage(SEAstate.getState(), String(yEncPos));
             break;
 
         case start:

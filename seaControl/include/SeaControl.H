@@ -40,6 +40,8 @@ QuadEncoder SEAenc(2, SEAEncA, SEAEncB);
 
 
 
+
+
 //Encoder yEnc(yEncA, yEncB);
 //Encoder SEAenc(SEAEncA, SEAEncB);
 
