@@ -42,7 +42,9 @@ public:
     long getGlobalDest();
     void setMove(bool toMoveOrNotToMove);
     bool getMove();
-    long getStateStartTime();
+    unsigned long getStateStartTime();
+    unsigned long getStateTime();
+    void initStartTime();
 };
 
 #endif //SEACONTROL_STATE_H

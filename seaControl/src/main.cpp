@@ -1,18 +1,19 @@
 #include <Arduino.h>
 //#include <../lib/Encoder/Encoder.h>
-#include <SeaControl.H>
+//#include <SeaControl.H>
 #include <../lib/State/State.h>
 #include "../lib/DualMC33926MotorShield/DualMC33926MotorShield.h"
 #include "../lib/ButtonBehavior/ButtonBehavior.h"
 #include "../lib/ActuatorControl/ActuatorControl.h"
 #include "../lib/serialComs/SerialComs.h"
 #include "../lib/QuadEncoder/QuadEncoder.h"
+#include "../lib/SEAParams/SEAParams.h"
 
 DualMC33926MotorShield md;
 ActuatorControl SEAMotor;
 SerialComs incoming;
 SerialComs outgoing;
-
+SEAParams seaParams;
 //enum state SEAstate.setState(stopped;
 
 State SEAstate;
@@ -37,20 +38,20 @@ void setup()
     SEAstate.setState( inSetup);
     Serial.begin(115200);
 
-    yEnc.setInitConfig();
-    yEnc.init();
-    yEnc.write(0);
+    seaParams.yEnc.setInitConfig();
+    seaParams.yEnc.init();
+    seaParams.yEnc.write(0);
 
-    SEAenc.setInitConfig();
-    SEAenc.EncConfig.revolutionCountCondition = DISABLE;
-    SEAenc.EncConfig.enableModuloCountMode = DISABLE;
-    SEAenc.init();
-    SEAenc.write(0);
+    seaParams.SEAenc.setInitConfig();
+    seaParams.SEAenc.EncConfig.revolutionCountCondition = DISABLE;
+    seaParams.SEAenc.EncConfig.enableModuloCountMode = DISABLE;
+    seaParams.SEAenc.init();
+    seaParams.SEAenc.write(0);
 
     //SEA Motor setup
-    pinMode(yPWM, OUTPUT);
-    pinMode(yEnable, OUTPUT);
-    pinMode(yDirection, OUTPUT);
+    pinMode(seaParams.yPWM, OUTPUT);
+    pinMode(seaParams.yEnable, OUTPUT);
+    pinMode(seaParams.yDirection, OUTPUT);
 
     //SEA limit switch setup;
     pinMode(yUpLimitButtonPin, INPUT_PULLUP);
@@ -62,12 +63,12 @@ void setup()
     pinMode(manDownButton, INPUT_PULLUP);
 
     //encoder index
-    pinMode(yEncIndex, INPUT);
-    pinMode(SEAEncIndex, INPUT);
+    pinMode(seaParams.yEncIndex, INPUT);
+    pinMode(seaParams.SEAEncIndex, INPUT);
 
     SEAstate.setState( stopped);
 
-    SEAMotor.motorControlInit(yPWM, yEnable, yDirection);
+    SEAMotor.motorControlInit(seaParams.yPWM, seaParams.yEnable, seaParams.yDirection);
     outgoing.generalMessage(SEAstate.getState(), "end setup");
 
 }
@@ -88,14 +89,14 @@ void loop() {
     long loopStartTime = millis();
 
     //read encoders
-    long yEncPos = yEnc.read();
-    long SEAEncPos = SEAenc.read();
-    if(yEncOld != yEncPos){
-        yEncOld = yEncPos;
+    long yEncPos = seaParams.yEnc.read();
+    long SEAEncPos = seaParams.SEAenc.read();
+    if(seaParams.yEncOld != yEncPos){
+        seaParams.yEncOld = yEncPos;
     }
 
-    if(SEAencOld != SEAEncPos){
-        SEAencOld = SEAEncPos;
+    if(seaParams.SEAencOld != SEAEncPos){
+        seaParams.SEAencOld = SEAEncPos;
         outgoing.generalMessage(SEAstate.getState(), String(SEAEncPos));
 
     }
@@ -160,11 +161,11 @@ void loop() {
 
         case start:
             // run init if first init hasnt happened.
-            if(!firstInit){
+            if(!seaParams.firstInit){
                 SEAstate.setState( axisInit);
             }
                 // reinitialize encoder
-            else if( yEncPos < encoderReInitThreshold) {
+            else if( yEncPos < seaParams.encoderReInitThreshold) {
                 SEAstate.setState( axisInit);
             }
                 // move onto next state
@@ -191,13 +192,13 @@ void loop() {
             delay(500);
             SEAMotor.driveYMotor(0, false, yEncPos);
             delay(100);
-            firstInit = true;
-            yEnc.write(0);
+            seaParams.firstInit = true;
+            seaParams.yEnc.write(0);
             delay(100);
             SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
-            yEncPos = yEnc.read();
+            yEncPos = seaParams.yEnc.read();
             while(yEncPos > -2000){
-                yEncPos = yEnc.read();
+                yEncPos = seaParams.yEnc.read();
                 // do nothing, keep driving;
             }
             SEAMotor.driveYMotor(0, false, yEncPos);
@@ -211,19 +212,23 @@ void loop() {
             break;
 
         case GoToPos:
-            yEncPos = yEnc.read();
+
+            yEncPos = seaParams.yEnc.read();
             SEAstate.setState( SEAMotor.pdControl(SEAstate.getGlobalDest(), yEncPos, loopStartTime, manDownSpeed, SEAstate.getState()));
-            long stateTime = millis() - SEAstate.getStateStartTime();
+//            unsigned long stateTime = millis() - SEAstate.getStateStartTime();
+            unsigned long stateTime = SEAstate.getStateTime();
+            outgoing.generalMessage(SEAstate.getState(), String(yEncPos));
+            outgoing.generalMessage(SEAstate.getState(), String(stateTime));
             if(stateTime > 1000 ){
                 SEAstate.setState( stopped);
-                stateStart = millis();
+                //seaParams.stateStart = millis();
                 outgoing.generalMessage(SEAstate.getState(), "go to pos over");
             }
             break;
 
-        default:
-            SEAstate.setState(stopped);
-            break;
+//        default:
+//            SEAstate.setState(stopped);
+//            break;
 
     }
 

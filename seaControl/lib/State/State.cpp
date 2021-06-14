@@ -6,8 +6,9 @@
 
 
 void State::setState(enum state setState) {
-    if(setState != this->myState){
+    if(setState != this->myState || this->myState == NULL){
         stateStartTime = millis();
+        Serial.println("reset timer");
     }
 
     this->myState = setState;
@@ -44,7 +45,16 @@ void State::setMove(bool toMoveOrNotToMove) {
     this->move = toMoveOrNotToMove;
 }
 
-long State::getStateStartTime() {
+unsigned long State::getStateStartTime() {
     return stateStartTime;
+}
+
+unsigned long State::getStateTime() {
+    unsigned long stateTime = millis() - stateStartTime;
+    return stateTime;
+}
+
+void State::initStartTime() {
+    stateStartTime = millis();
 }
 
