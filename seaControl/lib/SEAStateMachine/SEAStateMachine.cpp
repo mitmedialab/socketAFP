@@ -42,9 +42,11 @@ State SEAStateMachine::SEAState_Setup(){
     SEAOutgoing.generalMessage(SEAstate.getState(), "end setup");
 }
 
-// behavior when state is "stopped"
-// disable motor
-// set state to idle
+/*
+ * behavior when state is "stopped"
+ * disable motor
+ * set state to idle
+ */
 State SEAStateMachine::SEAState_stopped() {
     SEAMotor.driveYMotor(0, false, this->yEncPos);
 
@@ -53,8 +55,46 @@ State SEAStateMachine::SEAState_stopped() {
     return tempState;
 }
 
+
+/*
+ * behavior when state is "idle"
+ * check serial
+ * check manual buttons
+ */
 State SEAStateMachine::SEAState_idle() {
-    return State();
+
+
+//    if(!printedStop){
+//        outgoing.generalMessage(SEAstate.getState(), "stopped");
+////                Serial.println("stopped");
+//        printedStop = true;
+//    }
+
+    /* check the serial
+     *  if there is a message, parse, convert to state
+     * reply to computer with the message that was received
+     * return the new state.
+     */
+    if(Serial.available()){
+        SEAIncoming.checkSerial(); // this includes a loop, should block until a new line
+        if(SEAIncoming.checkComplete()) {
+            SEAIncoming.readIncomingJson();
+
+            String checkSerAgain = String(Serial.available());
+            SEAOutgoing.generalMessage(SEAstate.getState(), "State from incoming message");
+            SEAOutgoing.generalMessage(SEAstate.getState(), ("Serial available: " + checkSerAgain));
+//            printedStop = false;
+//            printedIdle = false;
+            return SEAIncoming.getState();
+
+        }
+    }
+
+    else{
+        State tempState = this->SEAstate;
+        tempState.setState(manDrive(tempState.getState()));
+        return tempState;
+    }
 }
 
 State SEAStateMachine::SEAState_manUp() {

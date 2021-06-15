@@ -29,41 +29,7 @@ SEAStateMachine SEA_StateMachine;
 void setup()
 {
 
-//    SEAstate.setState( inSetup);
-//    Serial.begin(115200);
-//
-//    seaParams.yEnc.setInitConfig();
-//    seaParams.yEnc.init();
-//    seaParams.yEnc.write(0);
-//
-//    seaParams.SEAenc.setInitConfig();
-//    seaParams.SEAenc.EncConfig.revolutionCountCondition = DISABLE;
-//    seaParams.SEAenc.EncConfig.enableModuloCountMode = DISABLE;
-//    seaParams.SEAenc.init();
-//    seaParams.SEAenc.write(0);
-//
-//    //SEA Motor setup
-//    pinMode(seaParams.yPWM, OUTPUT);
-//    pinMode(seaParams.yEnable, OUTPUT);
-//    pinMode(seaParams.yDirection, OUTPUT);
-//
-//    //SEA limit switch setup;
-//    pinMode(yUpLimitButtonPin, INPUT_PULLUP);
-//    pinMode(yDownLimitButtonPin, INPUT_PULLUP);
-//
-//    //UI buttons
-//    pinMode(startStopButton, INPUT_PULLUP);
-//    pinMode(manUpButton, INPUT_PULLUP);
-//    pinMode(manDownButton, INPUT_PULLUP);
-//
-//    //encoder index
-//    pinMode(seaParams.yEncIndex, INPUT);
-//    pinMode(seaParams.SEAEncIndex, INPUT);
-//
-//    SEAstate.setState( stopped);
-//
-//    SEAMotor.motorControlInit(seaParams.yPWM, seaParams.yEnable, seaParams.yDirection);
-//    outgoing.generalMessage(SEAstate.getState(), "end setup");
+
     SEA_StateMachine.SEAState_Setup();
     SEAstate = SEA_StateMachine.SEAstate;
     SEAMotor = SEA_StateMachine.SEAMotor;
@@ -111,33 +77,12 @@ void loop() {
 
         case stopped:
             SEAstate = SEA_StateMachine.SEAState_stopped();
+            SEA_StateMachine.SEAstate = SEAstate; // temporary
             break;
 
         case idle:
-            // check the manual drive buttons
-
-            SEAstate.setState( manDrive(SEAstate.getState()) );
-
-            if(!printedStop){
-                outgoing.generalMessage(SEAstate.getState(), "stopped");
-//                Serial.println("stopped");
-                printedStop = true;
-            }
-
-            if(Serial.available()){
-                incoming.checkSerial(); // this includes a loop, should block until a new line
-                if(incoming.checkComplete()) {
-                    incoming.readIncomingJson();
-                    SEAstate = incoming.getState();
-                    String checkSerAgain = String(Serial.available());
-                    outgoing.generalMessage(SEAstate.getState(), "State from incoming message");
-                    outgoing.generalMessage(SEAstate.getState(), ("Serial available: " + checkSerAgain));
-
-                    printedStop = false;
-                    printedIdle = false;
-                }
-            }
-
+            SEAstate = SEA_StateMachine.SEAState_idle();
+            SEA_StateMachine.SEAstate = SEAstate; // temporary
             break;
 
             //move up, manual
