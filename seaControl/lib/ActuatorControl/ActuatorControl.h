@@ -34,7 +34,7 @@ public:
     void driveYMotor(int motorSpeed, bool enable, long yEncoderPos);
     void initYMotor();
     void setGains(double p_gain_in, double d_gain_in, double i_gain_in);
-    enum state pdControl(long desiredPosition, long yEcoderPos, long currentTime, int basePWM, enum state currentState);
+    enum state pdControl(long desiredPosition, long yEcoderPos, unsigned long currentTime, int basePWM, enum state currentState);
     SerialComs outGoingMsgs;
 
 private:

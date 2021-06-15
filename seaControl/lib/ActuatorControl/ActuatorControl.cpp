@@ -93,7 +93,7 @@ void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
 //
 //};
 
-enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, long currentTime, int basePWM, enum state currentState) {
+enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, unsigned long currentTime, int basePWM, enum state currentState) {
     enum state actuatorState;
     //yEncPos = yEnc.read();
     pError = double(desiredPosition - yEncoderPos);

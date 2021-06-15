@@ -62,7 +62,11 @@ State SEAStateMachine::SEAState_stopped() {
  * check manual buttons
  */
 State SEAStateMachine::SEAState_idle() {
-
+    State tempState = this->SEAstate;
+    if(tempState.stateChange){
+        SEAOutgoing.generalMessage(tempState.getState(), "transitioned to idle");
+        tempState.stateChange = false;
+    }
 
 //    if(!printedStop){
 //        outgoing.generalMessage(SEAstate.getState(), "stopped");
@@ -81,8 +85,8 @@ State SEAStateMachine::SEAState_idle() {
             SEAIncoming.readIncomingJson();
 
             String checkSerAgain = String(Serial.available());
-            SEAOutgoing.generalMessage(SEAstate.getState(), "State from incoming message");
-            SEAOutgoing.generalMessage(SEAstate.getState(), ("Serial available: " + checkSerAgain));
+            SEAOutgoing.generalMessage(tempState.getState(), "State from incoming message");
+            SEAOutgoing.generalMessage(tempState.getState(), ("Serial available: " + checkSerAgain));
 //            printedStop = false;
 //            printedIdle = false;
             return SEAIncoming.getState();
@@ -91,7 +95,7 @@ State SEAStateMachine::SEAState_idle() {
     }
 
     else{
-        State tempState = this->SEAstate;
+//        State tempState = this->SEAstate;
         tempState.setState(manDrive(tempState.getState()));
         return tempState;
     }
@@ -125,7 +129,7 @@ State SEAStateMachine::SEAState_manDown() {
  * reaction to large "start" button
  * if the machine isn't initialized, set state to axis init
  * if the machine is past threshold, reinit
- * else: go to idle TODO: do something else... lol 
+ * else: go to idle TODO: do something else... lol
  */
 State SEAStateMachine::SEAState_start() {
     State tempState = this->SEAstate;
@@ -146,14 +150,62 @@ State SEAStateMachine::SEAState_start() {
     return tempState;
 }
 
+/*
+ * instructions for axis init
+ * go up until limit switch is hit.
+ * the checkLimits function changes the state, not this function
+ */
 State SEAStateMachine::SEAState_axisInit() {
-    return State();
+    SEAMotor.driveYMotor(initUpSpeed, true, yEncPos);
+//    SEAOutgoing.generalMessage(SEAstate.getState(), "axis init");
+    return this->SEAstate;
 }
 
 State SEAStateMachine::SEAState_axisInitComplete() {
-    return State();
+    State tempState = this->SEAstate;
+    SEAMotor.driveYMotor(0, false, yEncPos);
+    delay(500);
+    SEAMotor.driveYMotor(touchHardStop, true, yEncPos);
+    delay(500);
+    SEAMotor.driveYMotor(0, false, yEncPos);
+    delay(100);
+    seaParams.firstInit = true;
+    seaParams.yEnc.write(0);
+    delay(100);
+    SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
+    this->yEncPos = seaParams.yEnc.read();
+    while(this->yEncPos > -2000){
+        this->yEncPos = seaParams.yEnc.read();
+        // do nothing, keep driving;
+    }
+    SEAMotor.driveYMotor(0, false, yEncPos);
+    delay(1000);
+    //SEAstate = start;
+
+
+    SEAOutgoing.generalMessage(tempState.getState(), "axis init complete");
+//    printedStop = false;
+//    printedIdle = false;
+
+    tempState.setState(idle);
+
+    return tempState;
 }
 
-State SEAStateMachine::SEASate_GoToPos() {
-    return State();
+State SEAStateMachine::SEAState_GoToPos(unsigned long loopStartTime) {
+    State tempState = this->SEAstate;
+
+    yEncPos = seaParams.yEnc.read();
+    tempState.setState( SEAMotor.pdControl(tempState.getGlobalDest(), this->yEncPos, loopStartTime, manDownSpeed, tempState.getState()));
+//            unsigned long stateTime = millis() - SEAstate.getStateStartTime();
+    unsigned long stateTime = tempState.getStateTime();
+    SEAOutgoing.generalMessage(tempState.getState(), String(yEncPos));
+    SEAOutgoing.generalMessage(tempState.getState(), String(stateTime));
+    if(stateTime > 1000 ){
+        tempState.setState( stopped);
+        //seaParams.stateStart = millis();
+        SEAOutgoing.generalMessage(tempState.getState(), "go to pos over");
+    }
+
+    return tempState;
 }

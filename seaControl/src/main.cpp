@@ -65,7 +65,7 @@ void loop() {
 
     if(seaParams.SEAencOld != SEAEncPos){
         seaParams.SEAencOld = SEAEncPos;
-        outgoing.generalMessage(SEAstate.getState(), String(SEAEncPos));
+        outgoing.generalMessage(SEAstate.getState(), String(SEAEncPos), "SEA position");
 
     }
 
@@ -116,57 +116,65 @@ void loop() {
             SEA_StateMachine.SEAstate = SEAstate;
 
             break;
+
         case goToStart:
             break;
 
             // this will run until the stage hits the limit switch.
         case axisInit:
-            SEAMotor.driveYMotor(initUpSpeed, true, yEncPos);
-            outgoing.generalMessage(SEAstate.getState(), "axis init");
+            SEAstate = SEA_StateMachine.SEAState_axisInit();
+            SEA_StateMachine.SEAstate = SEAstate;
+//            SEAMotor.driveYMotor(initUpSpeed, true, yEncPos);
+//            outgoing.generalMessage(SEAstate.getState(), "axis init");
             break;
 
             // once a limit switch is hit
             // motor will stop, then restart and move slowly up against the hardstop
             // will resend system to start state.
         case axisInitComplete:
-            SEAMotor.driveYMotor(0, false, yEncPos);
-            delay(500);
-            SEAMotor.driveYMotor(touchHardStop, true, yEncPos);
-            delay(500);
-            SEAMotor.driveYMotor(0, false, yEncPos);
-            delay(100);
-            seaParams.firstInit = true;
-            seaParams.yEnc.write(0);
-            delay(100);
-            SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
-            yEncPos = seaParams.yEnc.read();
-            while(yEncPos > -2000){
-                yEncPos = seaParams.yEnc.read();
-                // do nothing, keep driving;
-            }
-            SEAMotor.driveYMotor(0, false, yEncPos);
-            delay(1000);
-            //SEAstate = start;
-            SEAstate.setState( idle);
-
-            outgoing.generalMessage(SEAstate.getState(), "axis init complete");
-            printedStop = false;
-            printedIdle = false;
+//            SEAMotor.driveYMotor(0, false, yEncPos);
+//            delay(500);
+//            SEAMotor.driveYMotor(touchHardStop, true, yEncPos);
+//            delay(500);
+//            SEAMotor.driveYMotor(0, false, yEncPos);
+//            delay(100);
+//            seaParams.firstInit = true;
+//            seaParams.yEnc.write(0);
+//            delay(100);
+//            SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
+//            yEncPos = seaParams.yEnc.read();
+//            while(yEncPos > -2000){
+//                yEncPos = seaParams.yEnc.read();
+//                // do nothing, keep driving;
+//            }
+//            SEAMotor.driveYMotor(0, false, yEncPos);
+//            delay(1000);
+//            //SEAstate = start;
+//            SEAstate.setState( idle);
+//
+//            outgoing.generalMessage(SEAstate.getState(), "axis init complete");
+//            printedStop = false;
+//            printedIdle = false;
+//            break;
+            SEAstate = SEA_StateMachine.SEAState_axisInitComplete();
+            SEA_StateMachine.SEAstate = SEAstate;
             break;
 
         case GoToPos:
 
-            yEncPos = seaParams.yEnc.read();
-            SEAstate.setState( SEAMotor.pdControl(SEAstate.getGlobalDest(), yEncPos, loopStartTime, manDownSpeed, SEAstate.getState()));
-//            unsigned long stateTime = millis() - SEAstate.getStateStartTime();
-            unsigned long stateTime = SEAstate.getStateTime();
-            outgoing.generalMessage(SEAstate.getState(), String(yEncPos));
-            outgoing.generalMessage(SEAstate.getState(), String(stateTime));
-            if(stateTime > 1000 ){
-                SEAstate.setState( stopped);
-                //seaParams.stateStart = millis();
-                outgoing.generalMessage(SEAstate.getState(), "go to pos over");
-            }
+//            yEncPos = seaParams.yEnc.read();
+//            SEAstate.setState( SEAMotor.pdControl(SEAstate.getGlobalDest(), yEncPos, loopStartTime, manDownSpeed, SEAstate.getState()));
+////            unsigned long stateTime = millis() - SEAstate.getStateStartTime();
+//            unsigned long stateTime = SEAstate.getStateTime();
+//            outgoing.generalMessage(SEAstate.getState(), String(yEncPos));
+//            outgoing.generalMessage(SEAstate.getState(), String(stateTime));
+//            if(stateTime > 1000 ){
+//                SEAstate.setState( stopped);
+//                //seaParams.stateStart = millis();
+//                outgoing.generalMessage(SEAstate.getState(), "go to pos over");
+//            }
+            SEAstate = SEA_StateMachine.SEAState_GoToPos(loopStartTime);
+            SEA_StateMachine.SEAstate = SEAstate;
             break;
 
 //        default:

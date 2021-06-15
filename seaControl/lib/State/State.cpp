@@ -7,7 +7,8 @@
 
 void State::setState(enum state setState) {
     if(setState != this->myState || this->myState == NULL){
-        stateStartTime = millis();
+        this->stateStartTime = millis();
+        this->stateChange = true;
     }
 
     this->myState = setState;

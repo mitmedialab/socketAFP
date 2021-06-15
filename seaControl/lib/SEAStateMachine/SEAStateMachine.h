@@ -30,7 +30,7 @@ public:
     State SEAState_start();
     State SEAState_axisInit();
     State SEAState_axisInitComplete();
-    State SEASate_GoToPos();
+    State SEAState_GoToPos(unsigned long loopStartTime);
 
     long yEncPos;
     long SEAEncPos;

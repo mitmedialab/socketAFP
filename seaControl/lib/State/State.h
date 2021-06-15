@@ -45,6 +45,7 @@ public:
     unsigned long getStateStartTime();
     unsigned long getStateTime();
     void initStartTime();
+    boolean stateChange = false;
 };
 
 #endif //SEACONTROL_STATE_H

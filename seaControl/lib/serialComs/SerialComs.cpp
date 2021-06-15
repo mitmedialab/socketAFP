@@ -58,9 +58,10 @@ void SerialComs::sendJson() {
 
 }
 
-void SerialComs::generalMessage(enum state currentState, String message) {
+void SerialComs::generalMessage(enum state currentState, String message, String message2) {
     this->doc["state"] = currentState;
     this->doc["message"] = message;
+    this->doc["extra info"] = message2;
     sendJson();
 }
 
