@@ -100,18 +100,21 @@ void loop() {
             break;
 
         case start:
-            // run init if first init hasnt happened.
-            if(!seaParams.firstInit){
-                SEAstate.setState( axisInit);
-            }
-                // reinitialize encoder
-            else if( yEncPos < seaParams.encoderReInitThreshold) {
-                SEAstate.setState( axisInit);
-            }
-                // move onto next state
-            else {
-                SEAstate.setState( GoToPos);
-            }
+//            // run init if first init hasnt happened.
+//            if(!seaParams.firstInit){
+//                SEAstate.setState( axisInit);
+//            }
+//                // reinitialize encoder
+//            else if( yEncPos < seaParams.encoderReInitThreshold) {
+//                SEAstate.setState( axisInit);
+//            }
+//                // move onto next state
+//            else {
+//                SEAstate.setState( GoToPos);
+//            }
+            SEAstate = SEA_StateMachine.SEAState_start();
+            SEA_StateMachine.SEAstate = SEAstate;
+
             break;
         case goToStart:
             break;

@@ -97,6 +97,10 @@ State SEAStateMachine::SEAState_idle() {
     }
 }
 
+/*
+ *  manual up state function
+ */
+
 State SEAStateMachine::SEAState_manUp() {
     // drive motor: slowUp, enabled, up
     State tempState = this->SEAstate;
@@ -104,6 +108,10 @@ State SEAStateMachine::SEAState_manUp() {
     tempState.setState(manDrive(tempState.getState()));
     return tempState;
 }
+
+/*
+ * Manual down state function
+ */
 
 State SEAStateMachine::SEAState_manDown() {
     // drive motor, slowDown, enabled, down
@@ -113,8 +121,29 @@ State SEAStateMachine::SEAState_manDown() {
     return tempState;
 }
 
+/*
+ * reaction to large "start" button
+ * if the machine isn't initialized, set state to axis init
+ * if the machine is past threshold, reinit
+ * else: go to idle TODO: do something else... lol 
+ */
 State SEAStateMachine::SEAState_start() {
-    return State();
+    State tempState = this->SEAstate;
+
+    // run init if first init hasnt happened.
+    if(!seaParams.firstInit){
+        tempState.setState( axisInit);
+    }
+        // reinitialize encoder
+    else if( yEncPos < seaParams.encoderReInitThreshold) {
+        tempState.setState( axisInit);
+    }
+        // move onto next state
+    else {
+        tempState.setState( idle);
+    }
+
+    return tempState;
 }
 
 State SEAStateMachine::SEAState_axisInit() {
