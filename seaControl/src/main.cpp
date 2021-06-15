@@ -64,7 +64,7 @@ void setup()
 //
 //    SEAMotor.motorControlInit(seaParams.yPWM, seaParams.yEnable, seaParams.yDirection);
 //    outgoing.generalMessage(SEAstate.getState(), "end setup");
-    SEA_StateMachine.SEASetup();
+    SEA_StateMachine.SEAState_Setup();
     SEAstate = SEA_StateMachine.SEAstate;
     SEAMotor = SEA_StateMachine.SEAMotor;
 
@@ -86,9 +86,13 @@ void loop() {
 
     long loopStartTime = millis();
 
+    // TODO: turn this into function in SEAStateMachine
     //read encoders
     long yEncPos = seaParams.yEnc.read();
     long SEAEncPos = seaParams.SEAenc.read();
+    SEA_StateMachine.yEncPos = yEncPos;
+    SEA_StateMachine.SEAEncPos = SEAEncPos;
+
     if(seaParams.yEncOld != yEncPos){
         seaParams.yEncOld = yEncPos;
     }
@@ -99,19 +103,14 @@ void loop() {
 
     }
 
+
+
+
     // behavior when the machine is in a stopped state
     switch (SEAstate.getState()){
 
         case stopped:
-            SEAMotor.driveYMotor(0, false, yEncPos);
-
-            if(!printedStop){
-                //outgoing.generalMessage(SEAstate, "stopped");
-                //Serial.println("stopped");
-                printedStop = true;
-            }
-            SEAstate.setState( idle);
-
+            SEAstate = SEA_StateMachine.SEAState_stopped();
             break;
 
         case idle:

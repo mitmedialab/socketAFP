@@ -4,7 +4,7 @@
 
 #include "SEAStateMachine.h"
 
-void SEAStateMachine::SEASetup() {
+State SEAStateMachine::SEAState_Setup(){
     SEAstate.setState( inSetup);
     Serial.begin(115200);
 
@@ -40,4 +40,43 @@ void SEAStateMachine::SEASetup() {
 
     SEAMotor.motorControlInit(seaParams.yPWM, seaParams.yEnable, seaParams.yDirection);
     SEAOutgoing.generalMessage(SEAstate.getState(), "end setup");
+}
+
+// behavior when state is "stopped"
+// disable motor
+// set state to idle
+State SEAStateMachine::SEAState_stopped() {
+    SEAMotor.driveYMotor(0, false, this->yEncPos);
+
+    State tempState = this->SEAstate;
+    tempState.setState( idle);
+    return tempState;
+}
+
+State SEAStateMachine::SEAState_idle() {
+    return State();
+}
+
+State SEAStateMachine::SEAState_manUp() {
+    return State();
+}
+
+State SEAStateMachine::SEAState_manDow() {
+    return State();
+}
+
+State SEAStateMachine::SEAState_start() {
+    return State();
+}
+
+State SEAStateMachine::SEAState_axisInit() {
+    return State();
+}
+
+State SEAStateMachine::SEAState_axisInitComplete() {
+    return State();
+}
+
+State SEAStateMachine::SEASate_GoToPos() {
+    return State();
 }

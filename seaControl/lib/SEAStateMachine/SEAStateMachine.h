@@ -22,7 +22,19 @@ public:
     State SEAstate;
     ActuatorControl SEAMotor;
 
-    void SEASetup();
+    State SEAState_Setup();
+    State SEAState_stopped();
+    State SEAState_idle();
+    State SEAState_manUp();
+    State SEAState_manDow();
+    State SEAState_start();
+    State SEAState_axisInit();
+    State SEAState_axisInitComplete();
+    State SEASate_GoToPos();
+
+    long yEncPos;
+    long SEAEncPos;
+
 };
 
 
