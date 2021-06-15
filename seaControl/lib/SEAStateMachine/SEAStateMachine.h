@@ -12,9 +12,17 @@
 #include "../ActuatorControl/ActuatorControl.h"
 #include "../serialComs/SerialComs.h"
 #include "../QuadEncoder/QuadEncoder.h"
+#include "../SEAParams/SEAParams.h"
 
 class SEAStateMachine {
+public:
+    SerialComs SEAIncoming;
+    SerialComs SEAOutgoing;
+    SEAParams seaParams;
+    State SEAstate;
+    ActuatorControl SEAMotor;
 
+    void SEASetup();
 };
 
 

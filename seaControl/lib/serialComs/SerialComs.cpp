@@ -90,7 +90,7 @@ void SerialComs::generateState() {
     this->messageState.setState(tempState);
     this->messageState.setMove(move);
     this->messageState.goToGlobalPos(position, pGain, iGain, dGain, 0);
-    this->messageState.initStartTime(); 
+    this->messageState.initStartTime();
 }
 
 State SerialComs::getState() {
