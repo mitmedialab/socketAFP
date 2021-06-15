@@ -8,7 +8,6 @@
 void State::setState(enum state setState) {
     if(setState != this->myState || this->myState == NULL){
         stateStartTime = millis();
-        Serial.println("reset timer");
     }
 
     this->myState = setState;

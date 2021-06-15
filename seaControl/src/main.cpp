@@ -87,18 +87,16 @@ void loop() {
 
             //move up, manual
         case manUp:
-            // drive motor: slowUp, enabled, up
-            SEAMotor.driveYMotor(manUpSpeed, true, yEncPos);
-            SEAstate.setState(manDrive(SEAstate.getState()));
-//            outgoing.generalMessage(SEAstate.getState(), String(yEncPos));
+
+            SEAstate = SEA_StateMachine.SEAState_manUp();
+            SEA_StateMachine.SEAstate = SEAstate;
             break;
 
             // move down, manual
         case manDown:
-            // drive motor, slowDown, enabled, down
-            SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
-            SEAstate.setState( manDrive(SEAstate.getState()));
-//            outgoing.generalMessage(SEAstate.getState(), String(yEncPos));
+
+            SEAstate = SEA_StateMachine.SEAState_manDown();
+            SEA_StateMachine.SEAstate = SEAstate;
             break;
 
         case start:

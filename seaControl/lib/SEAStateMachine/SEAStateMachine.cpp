@@ -98,11 +98,19 @@ State SEAStateMachine::SEAState_idle() {
 }
 
 State SEAStateMachine::SEAState_manUp() {
-    return State();
+    // drive motor: slowUp, enabled, up
+    State tempState = this->SEAstate;
+    SEAMotor.driveYMotor(manUpSpeed, true, this->yEncPos);
+    tempState.setState(manDrive(tempState.getState()));
+    return tempState;
 }
 
-State SEAStateMachine::SEAState_manDow() {
-    return State();
+State SEAStateMachine::SEAState_manDown() {
+    // drive motor, slowDown, enabled, down
+    State tempState = this->SEAstate;
+    SEAMotor.driveYMotor(manDownSpeed, true, this->yEncPos);
+    tempState.setState( manDrive(tempState.getState()));
+    return tempState;
 }
 
 State SEAStateMachine::SEAState_start() {

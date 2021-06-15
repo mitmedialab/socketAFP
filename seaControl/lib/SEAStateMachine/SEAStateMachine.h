@@ -26,7 +26,7 @@ public:
     State SEAState_stopped();
     State SEAState_idle();
     State SEAState_manUp();
-    State SEAState_manDow();
+    State SEAState_manDown();
     State SEAState_start();
     State SEAState_axisInit();
     State SEAState_axisInitComplete();
