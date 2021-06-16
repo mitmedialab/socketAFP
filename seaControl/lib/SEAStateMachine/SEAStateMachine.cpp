@@ -68,12 +68,6 @@ State SEAStateMachine::SEAState_idle() {
         tempState.stateChange = false;
     }
 
-//    if(!printedStop){
-//        outgoing.generalMessage(SEAstate.getState(), "stopped");
-////                Serial.println("stopped");
-//        printedStop = true;
-//    }
-
     /* check the serial
      *  if there is a message, parse, convert to state
      * reply to computer with the message that was received
@@ -184,8 +178,6 @@ State SEAStateMachine::SEAState_axisInitComplete() {
 
 
     SEAOutgoing.generalMessage(tempState.getState(), "axis init complete");
-//    printedStop = false;
-//    printedIdle = false;
 
     tempState.setState(idle);
 
@@ -201,6 +193,10 @@ State SEAStateMachine::SEAState_GoToPos(unsigned long loopStartTime) {
     unsigned long stateTime = tempState.getStateTime();
     SEAOutgoing.generalMessage(tempState.getState(), String(yEncPos));
     SEAOutgoing.generalMessage(tempState.getState(), String(stateTime));
+    /*
+     * go to position timeout
+     * TODO make this based on unchanging encoder value.
+     */
     if(stateTime > 1000 ){
         tempState.setState( stopped);
         //seaParams.stateStart = millis();
@@ -209,3 +205,88 @@ State SEAStateMachine::SEAState_GoToPos(unsigned long loopStartTime) {
 
     return tempState;
 }
+
+void SEAStateMachine::runSEAStateMachine() {
+
+    // check if the limit switch is hit
+   this->SEAstate.setState( checkLimits(SEAstate.getState()));
+   this->SEAstate.setState( startStop(SEAstate.getState()));
+
+//    long loopStartTime = millis();
+
+    // TODO: turn this into function in SEAStateMachine
+    //read encoders
+    this->yEncPos = seaParams.yEnc.read();
+    this->SEAEncPos = seaParams.SEAenc.read();
+
+
+    if(seaParams.yEncOld != this->yEncPos){
+        seaParams.yEncOld = this->yEncPos;
+    }
+
+    if(seaParams.SEAencOld != this->SEAEncPos){
+        seaParams.SEAencOld = this->SEAEncPos;
+        SEAOutgoing.generalMessage(this->SEAstate.getState(), String(SEAEncPos), "SEA position");
+
+    }
+
+    unsigned long loopStartTime = millis();
+    switch (this->SEAstate.getState()){
+
+        case stopped:
+            this->SEAstate = this->SEAState_stopped();
+
+            break;
+
+        case idle:
+            this->SEAstate = this->SEAState_idle();
+
+            break;
+
+            //move up, manual
+        case manUp:
+
+            this->SEAstate = this->SEAState_manUp();
+
+            break;
+
+            // move down, manual
+        case manDown:
+
+            this->SEAstate = this->SEAState_manDown();
+
+            break;
+
+        case start:
+
+            this->SEAstate = this->SEAState_start();
+
+
+            break;
+
+        case goToStart:
+            break;
+
+            // this will run until the stage hits the limit switch.
+        case axisInit:
+            this->SEAstate = this->SEAState_axisInit();
+
+
+            break;
+
+        case axisInitComplete:
+            this->SEAstate = this->SEAState_axisInitComplete();
+
+            break;
+
+        case GoToPos:
+
+            this->SEAstate = this->SEAState_GoToPos(loopStartTime);
+
+            break;
+
+    }
+
+
+}
+

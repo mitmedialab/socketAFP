@@ -32,9 +32,10 @@ public:
     State SEAState_axisInitComplete();
     State SEAState_GoToPos(unsigned long loopStartTime);
 
+    void runSEAStateMachine();
+
     long yEncPos;
     long SEAEncPos;
-
 };
 
 
