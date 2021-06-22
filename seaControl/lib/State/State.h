@@ -31,6 +31,7 @@ enum stateType {
     zHorizontal,
     zRotate,
     alphaRotate,
+    multiState
 };
 
 class State {
@@ -42,6 +43,11 @@ private:
     long globalDestinationPosition;
     bool move;
     long stateStartTime;
+    int multiDest;
+    int zTranslateDestination;
+    int zRotateDestination;
+    int alphaRotateDestination;
+
 public:
     void setState(enum state setState);
     void goToGlobalPos(long position, float pGain, float iGain, float dGain, int baseSpeed);
@@ -57,6 +63,13 @@ public:
     void initStartTime();
     void setStateType(enum stateType setStateType);
     boolean stateChange = false;
+
+    int getMultiDest();
+    void setMultiDest(int dest);
+//    int getZTranslateDest();
+//    int getZRotateDest();
+//    void setZTranslateDest(int dest);
+//    void setZRotateDest(int dest);
 
 
 };

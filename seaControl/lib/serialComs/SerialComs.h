@@ -7,7 +7,7 @@
 #include <Arduino.h>
 #include "../ArduinoJson/ArduinoJson.h"
 #include "../State/State.h"
-
+#include "../MultiState/MultiState.h"
 
 
 class SerialComs {
@@ -24,13 +24,15 @@ public:
     void generalMessage(enum state currentState, String message, String message2 = "");
     void sendJson();
     State getState();
-
+    MultiState getMultiState();
 private:
     StaticJsonDocument<200> doc;
     StaticJsonDocument<2048> incoming;
 
-    void generateState();
+    State generateState(); // this is for the SEA controller
+    MultiState generateMultiState(); // this is for the multiDof controller.
     State messageState;
+    MultiState messageMultiState;
     bool stringComplete = false;
     String newMsg = "";
     uint32_t msgID = 0;

@@ -28,3 +28,4 @@ class StateType(IntEnum):
     zHorizontal = 2
     zRotate = 3
     alphaRotate = 4
+    multiState = 5

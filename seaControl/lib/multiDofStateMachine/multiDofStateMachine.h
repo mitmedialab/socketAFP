@@ -11,6 +11,7 @@
 #include "../serialComs/SerialComs.h"
 //#include "../QuadEncoder/QuadEncoder.h"
 //#include "../SEAParams/SEAParams.h"
+#include "../multiDofParam/MultiDofParam.h"
 
 class multiDofStateMachine {
 
@@ -26,7 +27,7 @@ class multiDofStateMachine {
     State AlphaRotate_stopped();
     State SecondHeaterHigh();
     State SecondHeaterLow();
-
+    MultiDofParam mParams;
 public:
     State MultiDof_Setup();
     void runMultiDofState();
@@ -35,13 +36,20 @@ public:
     void runAlphaRotateStateMachine();
 
     State MultiDofState;
-    State ZHorizontalState;
+    State ZTranslateState;
     State ZRotationState;
     State AlphaState;
+    MultiState myMultiState;
+    void updateZTranslateGlobalPos(int newPos);
+    void updateZRotateGlobalPos(int newPos);
+
 
 private:
     SerialComs MultiDofIncoming;
     SerialComs MultiDofOutgoing;
+    int ZTranslateGlobalPos = 0;
+    int ZRotateGlobalPos = 0;
+
 };
 
 

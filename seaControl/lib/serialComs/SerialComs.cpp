@@ -45,8 +45,12 @@ void SerialComs::readIncomingJson(){
         Serial.println(error.f_str());
         return;
     }
-
-    this->generateState();
+    if(incoming["stateType"][0] == SEA || incoming["stateType"][0] == NULL){
+        this->messageState = this->generateState();
+    }
+    else{
+        this->messageMultiState = this->generateMultiState();
+    }
     this->incoming.clear();
 }
 
@@ -81,7 +85,7 @@ void SerialComs::motorState(enum state currentState, long encoderVal, long error
 
 }
 
-void SerialComs::generateState() {
+State SerialComs::generateState() {
     enum state tempState = incoming["state"][0];
     enum stateType tempStateType = incoming["stateType"][0];
     long position = incoming["go_y_position"][0];
@@ -89,16 +93,54 @@ void SerialComs::generateState() {
     float iGain = incoming["iGain"][0];
     float dGain = incoming["dGain"][0];
     boolean move = incoming["move_y"][0];
-    this->messageState.setState(tempState);
-    this->messageState.setStateType(tempStateType);
-    this->messageState.setMove(move);
-    this->messageState.goToGlobalPos(position, pGain, iGain, dGain, 0);
-    this->messageState.initStartTime();
+    State tempMsgState;
+    tempMsgState.setState(tempState);
+    tempMsgState.setStateType(tempStateType);
+    tempMsgState.setMove(move);
+    tempMsgState.goToGlobalPos(position, pGain, iGain, dGain, 0);
+    tempMsgState.initStartTime();
+
+    return tempMsgState;
 }
+
 
 State SerialComs::getState() {
     return this-> messageState;
 }
+
+/*
+ * this function generates the states for the multidof controller
+ * if the state is
+ */
+MultiState SerialComs::generateMultiState() {
+
+    /*
+     * naming here isnt great...
+     * booleans are if the dof is active
+     * ints are the values they are set to go to.
+     */
+    boolean moveZ = incoming["move_z"][0];
+    boolean rotZ = incoming["rotate_z"][0];
+    boolean rotA = incoming["roate_alpha"][0];
+    int zPos = incoming["go_z_position"][0];
+    int zRote = incoming["go_z_rotation"][0];
+    int aRote = incoming["go_alpha_rotation"][0];
+
+    /*
+     * create the multiState
+     * build the substates.
+     */
+    MultiState tempMultiState;
+
+    tempMultiState.setZRState(tempMultiState.buildState(zPos, moveZ));
+    tempMultiState.setZRState(tempMultiState.buildState(zRote, rotZ));
+    tempMultiState.setAState(tempMultiState.buildState(aRote, rotA));
+
+    return tempMultiState;
+
+}
+
+
 
 
 
