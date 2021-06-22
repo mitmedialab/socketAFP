@@ -30,4 +30,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(Z_DUMMY_TARGET ${SRC_LIST} lib/SEAStateMachine/SEAStateMachine.cpp lib/SEAStateMachine/SEAStateMachine.h lib/SEAParams/SEAParams.cpp lib/SEAParams/SEAParams.h)
+add_executable(Z_DUMMY_TARGET ${SRC_LIST} lib/SEAStateMachine/SEAStateMachine.cpp lib/SEAStateMachine/SEAStateMachine.h lib/SEAParams/SEAParams.cpp lib/SEAParams/SEAParams.h lib/multiDofStateMachine/multiDofStateMachine.cpp lib/multiDofStateMachine/multiDofStateMachine.h)

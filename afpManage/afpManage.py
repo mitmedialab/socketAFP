@@ -55,6 +55,8 @@ def ser_handler(ser: serial.Serial):
 				incoming = ser.read(ser.in_waiting)
 				serQ.put(incoming)
 				serQ
+				print("received")
+				print(incoming)
 				"""
 				incoming serial needs to be converted from b'' to string
 				then string needs to be broken into a list of string to convert it to a json string. 
@@ -63,7 +65,6 @@ def ser_handler(ser: serial.Serial):
 			if 0 == ser.in_waiting:
 				if not serShutdown.empty():
 					break
-
 
 
 def serial_sender(SEA_port: serial.Serial, general_port: serial.Serial, outgoing_queue: DataQueue):
@@ -79,6 +80,11 @@ def serial_sender(SEA_port: serial.Serial, general_port: serial.Serial, outgoing
 					message_as_bytes = message_to_send.pack_byte_array()
 					print(message_as_bytes)
 					SEA_port.write(message_as_bytes)
+				if board == Board.general:
+					print("this is going to general/multidof board")
+					message_as_bytes = message_to_send.pack_byte_array()
+					print(message_as_bytes)
+					general_port.write(message_as_bytes)
 				time.sleep(0.01)
 
 
@@ -97,12 +103,17 @@ def main():
 
 	# for instructions on opening the serial port check
 	# https://pythonhosted.org/pyserial/shortintro.html#opening-serial-ports
-
-	SEA_serial = serial.Serial('COM22', 115200)  # uncomment for windows, check com port with arduino or device manager
-	# ser = serial.Serial('/dev/cu.usbmodem1101', 115200) # uncomment for mac and check the port
+	SEA_serial = None
 	general_serial = None
+
 	try:
-		general_serial = serial.Serial('COM15', 115200)
+		SEA_serial = serial.Serial('COM22', 115200)  # uncomment for windows, check com port with arduino or device manager
+		# ser = serial.Serial('/dev/cu.usbmodem1101', 115200) # uncomment for mac and check the port
+
+	except Exception as e:
+		print(e)
+	try:
+		general_serial = serial.Serial('COM4', 115200)
 	except Exception as e:
 		print(e)
 
@@ -118,6 +129,10 @@ def main():
 	SEA_serial_thread = threading.Thread(target=ser_handler, args=(SEA_serial,))
 	SEA_serial_thread.setDaemon(True)
 	SEA_serial_thread.start()
+
+	general_serial_thread = threading.Thread(target=ser_handler, args=(general_serial,))
+	general_serial_thread.setDaemon(True)
+	general_serial_thread.start()
 
 	gui_thread = threading.Thread(target=afp_gui.run, args=sys.argv)
 	gui_thread.setDaemon(True)
