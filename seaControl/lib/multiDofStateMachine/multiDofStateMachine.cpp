@@ -90,6 +90,12 @@ void multiDofStateMachine::runAlphaRotateStateMachine() {
 }
 
 void multiDofStateMachine::runMultiDofState() {
-    MultiDof_idle();
+    State tempState = MultiDof_idle();
+    if(tempState.getState() != 0){
+        MultiDofOutgoing.generalMessage(MultiDofState.getState(), String(tempState.getState()), String(tempState.getStateType())) ;
+    }
+
+
+
 }
 

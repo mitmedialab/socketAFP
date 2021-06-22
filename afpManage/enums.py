@@ -20,3 +20,11 @@ class State(IntEnum):
     manDown = 8
     GoToPos = 9
     posTwo = 10
+
+
+class StateType(IntEnum):
+    SEA = 0
+    multiDof = 1
+    zHorizontal = 2
+    zRotate = 3
+    alphaRotate = 4

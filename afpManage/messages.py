@@ -1,5 +1,5 @@
 import json
-from enums import (Board, State)
+from enums import (Board, State, StateType)
 
 
 class Messages:
@@ -10,6 +10,7 @@ class Messages:
         self.go_z_rotation = None
         self.go_alpha_rotation = None
         self.state = None
+        self.stateType = None
         # by default axis movement is set to false.
         self.move_y = False
         self.move_z = False
@@ -35,6 +36,8 @@ class Messages:
     def gui_update_z_position(self, z_pos: str):
         self.go_z_position = self.input_to_int(z_pos)
         self.move_z = [False if self.go_z_position is None else True]
+        self.state = [State.GoToPos if self.move_z else State.idle]
+        self.stateType = [StateType.zHorizontal]
 
     def gui_update_z_rotation(self, z_pos: str):
         self.go_z_rotation = self.input_to_int(z_pos)

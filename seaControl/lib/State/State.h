@@ -25,10 +25,19 @@ enum state {
 
 };
 
+enum stateType {
+    SEA,
+    multiDof,
+    zHorizontal,
+    zRotate,
+    alphaRotate,
+};
+
 class State {
 //public:
 private:
     enum state myState;
+    enum stateType myStateType;
     long SEADestinationPosition;
     long globalDestinationPosition;
     bool move;
@@ -38,6 +47,7 @@ public:
     void goToGlobalPos(long position, float pGain, float iGain, float dGain, int baseSpeed);
     void goToSEAPos(long position, float pGain, float iGain, float dGain, int baseSpeed);
     enum state getState();
+    enum stateType getStateType();
     long getSEADest();
     long getGlobalDest();
     void setMove(bool toMoveOrNotToMove);
@@ -45,7 +55,10 @@ public:
     unsigned long getStateStartTime();
     unsigned long getStateTime();
     void initStartTime();
+    void setStateType(enum stateType setStateType);
     boolean stateChange = false;
+
+
 };
 
 #endif //SEACONTROL_STATE_H

@@ -58,3 +58,11 @@ void State::initStartTime() {
     stateStartTime = millis();
 }
 
+enum stateType State::getStateType() {
+    return this->myStateType;
+}
+
+void State::setStateType(enum stateType setStateType) {
+    this->myStateType = setStateType;
+}
+

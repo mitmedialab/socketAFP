@@ -83,12 +83,14 @@ void SerialComs::motorState(enum state currentState, long encoderVal, long error
 
 void SerialComs::generateState() {
     enum state tempState = incoming["state"][0];
+    enum stateType tempStateType = incoming["stateType"][0];
     long position = incoming["go_y_position"][0];
     float pGain = incoming["pGain"][0];
     float iGain = incoming["iGain"][0];
     float dGain = incoming["dGain"][0];
     boolean move = incoming["move_y"][0];
     this->messageState.setState(tempState);
+    this->messageState.setStateType(tempStateType);
     this->messageState.setMove(move);
     this->messageState.goToGlobalPos(position, pGain, iGain, dGain, 0);
     this->messageState.initStartTime();
