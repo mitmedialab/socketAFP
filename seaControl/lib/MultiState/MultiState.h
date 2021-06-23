@@ -21,7 +21,7 @@ public:
     void setZRState(State setState);
     void setAState(State setState);
 
-    State buildState(int pos, boolean active);
+    State buildState(long pos, boolean active, stateType newStateType);
 };
 
 

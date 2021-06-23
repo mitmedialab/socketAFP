@@ -45,10 +45,12 @@ void SerialComs::readIncomingJson(){
         Serial.println(error.f_str());
         return;
     }
-    if(incoming["stateType"][0] == SEA || incoming["stateType"][0] == NULL){
+    enum stateType incomingTemp = (incoming["stateType"][0]);
+    if(incomingTemp == SEA ){
         this->messageState = this->generateState();
     }
     else{
+        Serial.println("generate MultiState");
         this->messageMultiState = this->generateMultiState();
     }
     this->incoming.clear();
@@ -121,10 +123,10 @@ MultiState SerialComs::generateMultiState() {
      */
     boolean moveZ = incoming["move_z"][0];
     boolean rotZ = incoming["rotate_z"][0];
-    boolean rotA = incoming["roate_alpha"][0];
-    int zPos = incoming["go_z_position"][0];
-    int zRote = incoming["go_z_rotation"][0];
-    int aRote = incoming["go_alpha_rotation"][0];
+    boolean rotA = incoming["rotate_alpha"][0];
+    long zPos = incoming["go_z_position"][0];
+    long zRote = incoming["go_z_rotation"][0];
+    long aRote = incoming["go_alpha_rotation"][0];
 
     /*
      * create the multiState
@@ -132,12 +134,16 @@ MultiState SerialComs::generateMultiState() {
      */
     MultiState tempMultiState;
 
-    tempMultiState.setZRState(tempMultiState.buildState(zPos, moveZ));
-    tempMultiState.setZRState(tempMultiState.buildState(zRote, rotZ));
-    tempMultiState.setAState(tempMultiState.buildState(aRote, rotA));
+    tempMultiState.setZTState(tempMultiState.buildState(zPos, moveZ, zHorizontal));
+    tempMultiState.setZRState(tempMultiState.buildState(zRote, rotZ, zRotate));
+    tempMultiState.setAState(tempMultiState.buildState(aRote, rotA, alphaRotate));
 
     return tempMultiState;
 
+}
+
+MultiState SerialComs::getMultiState() {
+    return this->messageMultiState;
 }
 
 

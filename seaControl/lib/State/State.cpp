@@ -37,6 +37,11 @@ long State::getGlobalDest() {
     return this->globalDestinationPosition;
 }
 
+void State::setGlobalDest(long pos) {
+   this->globalDestinationPosition = pos;
+}
+
+
 bool State::getMove() {
     return this->move;
 }
@@ -66,13 +71,14 @@ void State::setStateType(enum stateType setStateType) {
     this->myStateType = setStateType;
 }
 
-int State::getMultiDest() {
-    return this->multiDest;
-}
+//int State::getMultiDest() {
+//    return this->multiDest;
+//}
+//
+//void State::setMultiDest(int dest) {
+//    this->multiDest = dest;
+//}
 
-void State::setMultiDest(int dest) {
-    this->multiDest = dest;
-}
 
 //int State::getZTranslateDest() {
 //    return this->zTranslateDestination;

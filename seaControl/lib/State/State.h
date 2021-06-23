@@ -56,6 +56,7 @@ public:
     enum stateType getStateType();
     long getSEADest();
     long getGlobalDest();
+    void setGlobalDest(long pos);
     void setMove(bool toMoveOrNotToMove);
     bool getMove();
     unsigned long getStateStartTime();
@@ -64,8 +65,8 @@ public:
     void setStateType(enum stateType setStateType);
     boolean stateChange = false;
 
-    int getMultiDest();
-    void setMultiDest(int dest);
+//    void getMultiDest();
+//    void setMultiDest(int dest);
 //    int getZTranslateDest();
 //    int getZRotateDest();
 //    void setZTranslateDest(int dest);

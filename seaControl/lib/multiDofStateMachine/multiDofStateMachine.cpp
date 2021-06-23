@@ -4,6 +4,9 @@
 
 #include "multiDofStateMachine.h"
 
+/*
+ * device setup helper function
+ */
 State multiDofStateMachine::MultiDof_Setup() {
 
     Serial.begin(115200);
@@ -21,11 +24,16 @@ State multiDofStateMachine::MultiDof_Setup() {
     tempState.setState(idle);
     return tempState;
 }
-
+/*
+ * stop everything! helper function
+ */
 State multiDofStateMachine::MultiDof_stopped() {
     return State();
 }
 
+/*
+ * helper function to manage incoming messages
+ */
 State multiDofStateMachine::MultiDof_idle() {
     State tempState = MultiDofState;
     if(Serial.available()){
@@ -37,13 +45,24 @@ State multiDofStateMachine::MultiDof_idle() {
             MultiDofOutgoing.generalMessage(tempState.getState(), "State from incoming message");
             MultiDofOutgoing.generalMessage(tempState.getState(), ("Serial available: " + checkSerAgain));
             this->myMultiState = MultiDofIncoming.getMultiState();
-            return MultiDofIncoming.getState();
+            State tempTempState = this->myMultiState.getZTState();
+//            MultiDofOutgoing.generalMessage(tempState.getState(), String(tempTempState.getGlobalDest()),
+//                                            "z global dest");
+//            MultiDofOutgoing.generalMessage(tempState.getState(), String(tempTempState.getState()),
+//                                            "z state");
+//            MultiDofOutgoing.generalMessage(tempState.getState(), String(tempTempState.getStateType()),
+//                                            "z statetype");
+            return myMultiState.getGeneralMultiState();
 
         }
     }
 
     return tempState;
 }
+
+/*
+ * Helper functions for the Z translational stage state machine
+ */
 
 State multiDofStateMachine::ZTranslate_idle() {
     return State();
@@ -58,10 +77,10 @@ State multiDofStateMachine::ZTranslate_idle() {
 State multiDofStateMachine::ZTranslate_gotToPos() {
     State tempState = this->ZTranslateState;
     if(tempState.stateChange){
-        mParams.tic1.setTargetPosition(tempState.getZTranslateDest());
+        mParams.tic1.setTargetPosition(tempState.getGlobalDest());
         tempState.stateChange = false;
     }
-    else if(mParams.tic1.getCurrentPosition() != tempState.getZTranslateDest()){
+    else if(mParams.tic1.getCurrentPosition() != tempState.getGlobalDest()){
         mParams.tic1.resetCommandTimeout();
     }
     else{
@@ -74,6 +93,9 @@ State multiDofStateMachine::ZTranslate_stopped() {
     return State();
 }
 
+/*
+ * helper functions for spindle state machine
+ */
 
 State multiDofStateMachine::ZRotate_goToPos() {
     return State();
@@ -87,6 +109,9 @@ State multiDofStateMachine::ZRotate_idle() {
     return State();
 }
 
+/*
+ * Helper functions for alpha dof state machine
+ */
 State multiDofStateMachine::AlphaRotate_goToPos() {
     return State();
 }
@@ -95,6 +120,9 @@ State multiDofStateMachine::AlphaRotate_stopped() {
     return State();
 }
 
+/*
+ * helper functions for heater.
+ */
 State multiDofStateMachine::SecondHeaterHigh() {
     return State();
 }
@@ -103,8 +131,13 @@ State multiDofStateMachine::SecondHeaterLow() {
     return State();
 }
 
+/*
+ * state machine for Z translational axis
+ */
 void multiDofStateMachine::runZtranslateStateMachine() {
-    switch(this->ZTranslateState.getState()){
+    State zTempState = this->myMultiState.getZTState();
+    switch(zTempState.getState()){
+//    switch(this->ZTranslateState.getState()){
         case stopped:
             break;
         case idle:
@@ -114,13 +147,25 @@ void multiDofStateMachine::runZtranslateStateMachine() {
         case goToStart:
             break;
         case GoToPos:
-            ZTranslateState = ZRotate_goToPos();
-            MultiDofOutgoing(ZTranslateState.getState(), )
+//            ZTranslateState = ZTranslate_gotToPos();
+            MultiDofOutgoing.generalMessage(zTempState.getState(),
+                                            String(zTempState.getMove()),
+                                            "get move");
+            MultiDofOutgoing.generalMessage(zTempState.getState(),
+                                            String(zTempState.getGlobalDest()),
+                                            "z global destination");
+
+            zTempState.setState(idle);
+//            this->myMultiState.getZTState().setState(idle);
+            this->myMultiState.setZTState(zTempState);
             break;
     }
 
 }
 
+/*
+ * State machine for spindle / z rotational axis
+ */
 void multiDofStateMachine::runZrotateStateMachine() {
     switch(this->ZRotationState.getState()){
         case stopped:
@@ -136,6 +181,9 @@ void multiDofStateMachine::runZrotateStateMachine() {
     }
 }
 
+/*
+ * State machine for alpha dof
+ */
 void multiDofStateMachine::runAlphaRotateStateMachine() {
     switch(this->AlphaState.getState()){
         case stopped:
@@ -151,14 +199,18 @@ void multiDofStateMachine::runAlphaRotateStateMachine() {
     }
 }
 
+/*
+ * device manager state machine
+ */
 void multiDofStateMachine::runMultiDofState() {
     State tempState = MultiDof_idle();
     if(tempState.getState() != 0){
-        MultiDofOutgoing.generalMessage(MultiDofState.getState(), String(tempState.getState()),
-                                        String(tempState.getStateType())) ;
+//        MultiDofOutgoing.generalMessage(MultiDofState.getState(),
+//                                        String(myMultiState.getZTState().getState()),
+//                                        String(myMultiState.getZTState().getStateType()));
     }
 
-
+    this->runZtranslateStateMachine();
 
 }
 

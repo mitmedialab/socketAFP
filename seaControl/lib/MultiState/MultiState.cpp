@@ -17,7 +17,7 @@ State MultiState::getAState() {
 }
 
 void MultiState::setZTState(State setState) {
-    this->zTranslateState = setState
+    this->zTranslateState = setState;
 }
 
 void MultiState::setZRState(State setState) {
@@ -29,12 +29,13 @@ void MultiState::setAState(State setState) {
 }
 
 
-State MultiState::buildState(int pos, boolean active) {
+State MultiState::buildState(long pos, boolean active, stateType newStateType) {
     State tempState;
     if(active){
         tempState.setMove(true);
         tempState.setStateType(zHorizontal);
-        tempState.setMultiDest(pos);
+        tempState.setGlobalDest(pos);
+        tempState.setState(GoToPos);
     }
     else{
         tempState.setMove(false);
