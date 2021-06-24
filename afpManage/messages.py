@@ -35,13 +35,15 @@ class Messages:
 
     def gui_update_z_position(self, z_pos: str):
         self.go_z_position = self.input_to_int(z_pos)
-        self.move_z = [False if self.go_z_position is None else True]
+        print(self.go_z_position)
+        self.move_z = [False if self.go_z_position[0] is None else True]
+        print(self.move_z)
         self.state = [State.GoToPos if self.move_z else State.idle]
         self.stateType = [StateType.zHorizontal]
 
     def gui_update_z_rotation(self, z_pos: str):
         self.go_z_rotation = self.input_to_int(z_pos)
-        self.rotate_z = [False if self.go_z_rotation is None else True]
+        self.rotate_z = [False if self.go_z_rotation[0] is None else True]
 
     def gui_update_alpha_rotation(self, alpha_pos: str):
         self.go_y_position = self.input_to_int(alpha_pos)
@@ -59,7 +61,8 @@ class Messages:
 
     def input_to_int(self, input: str):
         try:
-            converted = [None if input == '' else int(input)]
+            converted = [int(input) if input.isnumeric() else None]
+            # converted = [None if input == '' else int(input)]
             return converted
         except Exception as e:
             print("error: " + str(e) + " when converting " + input)

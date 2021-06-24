@@ -71,28 +71,4 @@ void State::setStateType(enum stateType setStateType) {
     this->myStateType = setStateType;
 }
 
-//int State::getMultiDest() {
-//    return this->multiDest;
-//}
-//
-//void State::setMultiDest(int dest) {
-//    this->multiDest = dest;
-//}
-
-
-//int State::getZTranslateDest() {
-//    return this->zTranslateDestination;
-//}
-//
-//int State::getZRotateDest() {
-//    return this->zRotateDestination;
-//}
-//
-//void State::setZTranslateDest(int dest) {
-//    this->zTranslateDestination = dest;
-//}
-//
-//void State::setZRotateDest(int dest) {
-//    this->zRotateDestination = dest;
-//}
 

@@ -50,7 +50,6 @@ void SerialComs::readIncomingJson(){
         this->messageState = this->generateState();
     }
     else{
-        Serial.println("generate MultiState");
         this->messageMultiState = this->generateMultiState();
     }
     this->incoming.clear();
@@ -133,7 +132,6 @@ MultiState SerialComs::generateMultiState() {
      * build the substates.
      */
     MultiState tempMultiState;
-
     tempMultiState.setZTState(tempMultiState.buildState(zPos, moveZ, zHorizontal));
     tempMultiState.setZRState(tempMultiState.buildState(zRote, rotZ, zRotate));
     tempMultiState.setAState(tempMultiState.buildState(aRote, rotA, alphaRotate));

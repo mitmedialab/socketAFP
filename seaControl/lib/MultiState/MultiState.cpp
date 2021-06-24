@@ -36,9 +36,11 @@ State MultiState::buildState(long pos, boolean active, stateType newStateType) {
         tempState.setStateType(zHorizontal);
         tempState.setGlobalDest(pos);
         tempState.setState(GoToPos);
+        tempState.stateChange = true;
     }
     else{
         tempState.setMove(false);
+        tempState.setState(idle);
     }
     return tempState;
 }

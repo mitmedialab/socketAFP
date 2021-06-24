@@ -11,11 +11,12 @@ State multiDofStateMachine::MultiDof_Setup() {
 
     Serial.begin(115200);
     Wire.begin();
-
+    mParams.tic1.haltAndSetPosition(0);
     mParams.tic1.exitSafeStart();
     mParams.tic1.setCurrentLimit(1500);
     mParams.tic1.setStepMode(TicStepMode::Microstep2);
 
+    mParams.tic2.haltAndSetPosition(0);
     mParams.tic2.exitSafeStart();
     mParams.tic2.setCurrentLimit(1500);
     mParams.tic2.setStepMode(TicStepMode::Microstep2);
@@ -75,15 +76,26 @@ State multiDofStateMachine::ZTranslate_idle() {
  * then go back to idle
  */
 State multiDofStateMachine::ZTranslate_gotToPos() {
-    State tempState = this->ZTranslateState;
+    State tempState = this->myMultiState.getZTState();
     if(tempState.stateChange){
+        mParams.tic1.clearDriverError();
         mParams.tic1.setTargetPosition(tempState.getGlobalDest());
+        mParams.tic1.resetCommandTimeout();
+        MultiDofOutgoing.generalMessage(tempState.getState(), "target position set", "good luck");
         tempState.stateChange = false;
     }
     else if(mParams.tic1.getCurrentPosition() != tempState.getGlobalDest()){
         mParams.tic1.resetCommandTimeout();
+//        MultiDofOutgoing.generalMessage(tempState.getState(), String(mParams.tic1.getCurrentPosition()),
+//                                        "current position of stepper");
     }
     else{
+
+        uint32_t start = millis();
+        do
+        {
+            mParams.tic1.resetCommandTimeout();
+        } while ((uint32_t)(millis() - start) <= 100);
         tempState.setState(idle);
     }
     return tempState;
@@ -136,6 +148,7 @@ State multiDofStateMachine::SecondHeaterLow() {
  */
 void multiDofStateMachine::runZtranslateStateMachine() {
     State zTempState = this->myMultiState.getZTState();
+    mParams.tic1.resetCommandTimeout();
     switch(zTempState.getState()){
 //    switch(this->ZTranslateState.getState()){
         case stopped:
@@ -147,16 +160,15 @@ void multiDofStateMachine::runZtranslateStateMachine() {
         case goToStart:
             break;
         case GoToPos:
-//            ZTranslateState = ZTranslate_gotToPos();
-            MultiDofOutgoing.generalMessage(zTempState.getState(),
-                                            String(zTempState.getMove()),
-                                            "get move");
-            MultiDofOutgoing.generalMessage(zTempState.getState(),
-                                            String(zTempState.getGlobalDest()),
-                                            "z global destination");
-
-            zTempState.setState(idle);
-//            this->myMultiState.getZTState().setState(idle);
+//
+//            MultiDofOutgoing.generalMessage(zTempState.getState(),
+//                                            String(zTempState.getMove()),
+//                                            "get move");
+//            MultiDofOutgoing.generalMessage(zTempState.getState(),
+//                                            String(zTempState.getGlobalDest()),
+//                                            "z global destination");
+            zTempState = ZTranslate_gotToPos();
+//            zTempState.setState(idle);
             this->myMultiState.setZTState(zTempState);
             break;
     }
