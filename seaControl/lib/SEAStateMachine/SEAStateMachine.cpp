@@ -191,8 +191,9 @@ State SEAStateMachine::SEAState_GoToPos(unsigned long loopStartTime) {
     tempState.setState( SEAMotor.pdControl(tempState.getGlobalDest(), this->yEncPos, loopStartTime, manDownSpeed, tempState.getState()));
 //            unsigned long stateTime = millis() - SEAstate.getStateStartTime();
     unsigned long stateTime = tempState.getStateTime();
-    SEAOutgoing.generalMessage(tempState.getState(), String(yEncPos));
-    SEAOutgoing.generalMessage(tempState.getState(), String(stateTime));
+//    SEAOutgoing.generalMessage(tempState.getState(), String(yEncPos), "current encoder position");
+//    SEAOutgoing.generalMessage(tempState.getState(), String(stateTime), "state time");
+//    SEAOutgoing.generalMessage(tempState.getState(), String(tempState.getGlobalDest()), "destination");
     /*
      * go to position timeout
      * TODO make this based on unchanging encoder value.

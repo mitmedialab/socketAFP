@@ -30,42 +30,46 @@ class Messages:
 
     def gui_update_y_position(self, y_pos: str):
         self.go_y_position = self.input_to_int(y_pos)
-        self.move_y = [False if self.go_y_position is None else True]
-        self.state = [State.GoToPos if self.move_y else State.idle]
+
+        # convert the number to negative number
+        if self.go_y_position > 0:
+            self.go_y_position = self.go_y_position * -1
+
+        self.move_y = False if self.go_y_position is None else True
+        self.state = State.GoToPos if self.move_y else State.idle
 
     def gui_update_z_position(self, z_pos: str):
         self.go_z_position = self.input_to_int(z_pos)
         print(self.go_z_position)
-        self.move_z = [False if self.go_z_position[0] is None else True]
+        self.move_z = False if self.go_z_position is None else True
         print(self.move_z)
         self.state = [State.GoToPos if self.move_z else State.idle]
         self.stateType = [StateType.zHorizontal]
 
     def gui_update_z_rotation(self, z_pos: str):
         self.go_z_rotation = self.input_to_int(z_pos)
-        self.rotate_z = [False if self.go_z_rotation[0] is None else True]
+        self.rotate_z = False if self.go_z_rotation is None else True
 
     def gui_update_alpha_rotation(self, alpha_pos: str):
         self.go_y_position = self.input_to_int(alpha_pos)
-        self.rotate_alpha = [False if self.go_alpha_rotation is None else True]
+        self.rotate_alpha = False if self.go_alpha_rotation is None else True
 
     # next two functions are for converting string inputs to numbers
     # necessary for handling bad inputs, like blank inputs
     def input_to_float(self, input: str):
         try:
-            converted = [None if input == '' else float(input)]
-            return converted
+            return float(input)
         except Exception as e:
             print("error: " + str(e) + " when converting " + input)
             return None
 
     def input_to_int(self, input: str):
         try:
-            converted = [int(input) if input.isnumeric() else None]
-            # converted = [None if input == '' else int(input)]
+            converted = int(input)
             return converted
         except Exception as e:
             print("error: " + str(e) + " when converting " + input)
+
             return None
 
     def pack_json(self) -> str:

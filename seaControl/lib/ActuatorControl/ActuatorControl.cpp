@@ -67,7 +67,8 @@ void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
     analogWrite(pwmPin, pwm);
     digitalWrite(enablePin, enable);
     digitalWrite(dirPin, mDirection);
-//    outGoingMsgs.generalMessage(1, String(yEncoderPos));
+//    outGoingMsgs.generalMessage(GoToPos, String(pwm),"pwm");
+//    outGoingMsgs.generalMessage(GoToPos, String(mDirection), "direction");
 }
 
 // TODO: make init routine a function
@@ -113,9 +114,9 @@ enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, un
 
         int pTerm = int(p_gain * pError);
         int dTerm = int(d_gain * dError);
-        int iTerm = int(d_gain * iError);
-//        setPWM = pTerm + dTerm + iTerm;
-        setPWM = pTerm + dTerm;
+        int iTerm = int(i_gain * iError);
+        setPWM = pTerm + dTerm + iTerm;
+//        setPWM = pTerm + dTerm;
 //        if(setPWM > 0){
 //            setPWM = setPWM + 60;
 //        }

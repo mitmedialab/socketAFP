@@ -87,13 +87,20 @@ void SerialComs::motorState(enum state currentState, long encoderVal, long error
 }
 
 State SerialComs::generateState() {
-    enum state tempState = incoming["state"][0];
-    enum stateType tempStateType = incoming["stateType"][0];
-    long position = incoming["go_y_position"][0];
-    float pGain = incoming["pGain"][0];
-    float iGain = incoming["iGain"][0];
-    float dGain = incoming["dGain"][0];
-    boolean move = incoming["move_y"][0];
+//    enum state tempState = incoming["state"][0];
+//    enum stateType tempStateType = incoming["stateType"][0];
+//    long position = incoming["go_y_position"][0];
+//    float pGain = incoming["pGain"][0];
+//    float iGain = incoming["iGain"][0];
+//    float dGain = incoming["dGain"][0];
+//    boolean move = incoming["move_y"][0];
+    enum state tempState = incoming["state"];
+    enum stateType tempStateType = incoming["stateType"];
+    long position = incoming["go_y_position"];
+    float pGain = incoming["pGain"];
+    float iGain = incoming["iGain"];
+    float dGain = incoming["dGain"];
+    boolean move = incoming["move_y"];
     State tempMsgState;
     tempMsgState.setState(tempState);
     tempMsgState.setStateType(tempStateType);
@@ -120,12 +127,18 @@ MultiState SerialComs::generateMultiState() {
      * booleans are if the dof is active
      * ints are the values they are set to go to.
      */
-    boolean moveZ = incoming["move_z"][0];
-    boolean rotZ = incoming["rotate_z"][0];
-    boolean rotA = incoming["rotate_alpha"][0];
-    long zPos = incoming["go_z_position"][0];
-    long zRote = incoming["go_z_rotation"][0];
-    long aRote = incoming["go_alpha_rotation"][0];
+//    boolean moveZ = incoming["move_z"][0];
+//    boolean rotZ = incoming["rotate_z"][0];
+//    boolean rotA = incoming["rotate_alpha"][0];
+//    long zPos = incoming["go_z_position"][0];
+//    long zRote = incoming["go_z_rotation"][0];
+//    long aRote = incoming["go_alpha_rotation"][0];
+    boolean moveZ = incoming["move_z"];
+    boolean rotZ = incoming["rotate_z"];
+    boolean rotA = incoming["rotate_alpha"];
+    long zPos = incoming["go_z_position"];
+    long zRote = incoming["go_z_rotation"];
+    long aRote = incoming["go_alpha_rotation"];
 
     /*
      * create the multiState
