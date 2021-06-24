@@ -169,8 +169,10 @@ class GuiMain:
         self.out_data.data.put(general_send)
 
     def on_all_click(self):
-        self.read_sea_inputs()
-        self.read_general_inputs()
+        # self.read_sea_inputs()
+        # self.read_general_inputs()
+        self.on_send_sea_click()
+        self.on_general_click()
 
     def on_clear_terminal(self):
         self.terminal_window.clear()

@@ -103,16 +103,16 @@ State multiDofStateMachine::ZTranslate_stopped() {
  */
 
 State multiDofStateMachine::ZRotate_goToPos() {
-    State tempState = this->myMultiState.getZTState();
+    State tempState = this->myMultiState.getZRState();
     if(tempState.stateChange){
-        mParams.tic1.clearDriverError();
-        mParams.tic1.setTargetPosition(tempState.getGlobalDest());
-        mParams.tic1.resetCommandTimeout();
+        mParams.tic2.clearDriverError();
+        mParams.tic2.setTargetPosition(tempState.getGlobalDest());
+        mParams.tic2.resetCommandTimeout();
         MultiDofOutgoing.generalMessage(tempState.getState(), "target position set", "good luck");
         tempState.stateChange = false;
     }
-    else if(mParams.tic1.getCurrentPosition() != tempState.getGlobalDest()){
-        mParams.tic1.resetCommandTimeout();
+    else if(mParams.tic2.getCurrentPosition() != tempState.getGlobalDest()){
+        mParams.tic2.resetCommandTimeout();
 //        MultiDofOutgoing.generalMessage(tempState.getState(), String(mParams.tic1.getCurrentPosition()),
 //                                        "current position of stepper");
     }
@@ -121,7 +121,7 @@ State multiDofStateMachine::ZRotate_goToPos() {
         uint32_t start = millis();
         do
         {
-            mParams.tic1.resetCommandTimeout();
+            mParams.tic2.resetCommandTimeout();
         } while ((uint32_t)(millis() - start) <= 100);
         tempState.setState(idle);
     }
@@ -177,7 +177,6 @@ void multiDofStateMachine::runZtranslateStateMachine() {
             break;
         case GoToPos:
             zTempState = ZTranslate_gotToPos();
-//            zTempState.setState(idle);
             this->myMultiState.setZTState(zTempState);
             break;
     }
@@ -188,7 +187,9 @@ void multiDofStateMachine::runZtranslateStateMachine() {
  * State machine for spindle / z rotational axis
  */
 void multiDofStateMachine::runZrotateStateMachine() {
-    switch(this->ZRotationState.getState()){
+    State zTempState = this->myMultiState.getZRState();
+    mParams.tic2.resetCommandTimeout();
+    switch(zTempState.getState()){
         case stopped:
             break;
         case idle:
@@ -198,6 +199,8 @@ void multiDofStateMachine::runZrotateStateMachine() {
         case goToStart:
             break;
         case GoToPos:
+            zTempState = ZRotate_goToPos();
+            this->myMultiState.setZRState(zTempState);
             break;
     }
 }
@@ -232,6 +235,7 @@ void multiDofStateMachine::runMultiDofState() {
     }
 
     this->runZtranslateStateMachine();
+    this->runZrotateStateMachine();
 
 }
 
