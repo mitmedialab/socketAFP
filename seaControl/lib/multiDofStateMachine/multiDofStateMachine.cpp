@@ -10,6 +10,7 @@
 State multiDofStateMachine::MultiDof_Setup() {
 
     Serial.begin(115200);
+    Serial8.begin(9600);
     Wire.begin();
     mParams.tic1.haltAndSetPosition(0);
     mParams.tic1.exitSafeStart();
@@ -209,7 +210,8 @@ void multiDofStateMachine::runZrotateStateMachine() {
  * State machine for alpha dof
  */
 void multiDofStateMachine::runAlphaRotateStateMachine() {
-    switch(this->AlphaState.getState()){
+    State alphaTempState = this->myMultiState.getAState();
+    switch(alphaTempState.getState()){
         case stopped:
             break;
         case idle:
@@ -219,7 +221,11 @@ void multiDofStateMachine::runAlphaRotateStateMachine() {
         case goToStart:
             break;
         case GoToPos:
-            break;
+            long pos = alphaTempState.getGlobalDest();
+            mParams.alphaServo.setTarget(5,pos);
+            alphaTempState.setState(idle);
+            this->myMultiState.setAState(alphaTempState);
+
     }
 }
 
@@ -236,6 +242,7 @@ void multiDofStateMachine::runMultiDofState() {
 
     this->runZtranslateStateMachine();
     this->runZrotateStateMachine();
+    this->runAlphaRotateStateMachine(); 
 
 }
 

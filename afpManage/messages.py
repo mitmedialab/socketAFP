@@ -51,7 +51,7 @@ class Messages:
         self.rotate_z = False if self.go_z_rotation is None else True
 
     def gui_update_alpha_rotation(self, alpha_pos: str):
-        self.go_y_position = self.input_to_int(alpha_pos)
+        self.go_alpha_rotation = self.input_to_int(alpha_pos)
         self.rotate_alpha = False if self.go_alpha_rotation is None else True
 
     # next two functions are for converting string inputs to numbers

@@ -7,11 +7,12 @@
 
 #include "../tic-arduino/Tic.h"
 #include "Arduino.h"
+#include "../maestro/PololuMaestro.h"
 class MultiDofParam {
 public:
     TicI2C tic1 = TicI2C(14);
     TicI2C tic2 = TicI2C(15);
-
+    MicroMaestro alphaServo =  MicroMaestro(Serial8);
 
 };
 

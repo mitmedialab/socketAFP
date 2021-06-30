@@ -12,7 +12,8 @@
 //#include "../QuadEncoder/QuadEncoder.h"
 //#include "../SEAParams/SEAParams.h"
 #include "../multiDofParam/MultiDofParam.h"
-
+#include "../maestro/PololuMaestro.h"
+#include "Arduino.h"
 class multiDofStateMachine {
 
     State MultiDof_stopped();
@@ -42,6 +43,7 @@ public:
     MultiState myMultiState;
     void updateZTranslateGlobalPos(int newPos);
     void updateZRotateGlobalPos(int newPos);
+
 
 
 private:
