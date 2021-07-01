@@ -1,33 +1,6 @@
-//#include "../lib/SEAStateMachine/SEAStateMachine.h"
-//
-//SEAStateMachine SEA_StateMachine;
-////enum state tempState;
-//
-//
-////////////////////////////////
-//// setup
-//// initalizing all the pins and their modes
-//
-//void setup()
-//{
-//    SEA_StateMachine.SEAState_Setup();
-//}
-//
-////////////////////////////////////////////////////////////////////
-////  Main loop
-//// everything happens here
-////////////////////////////////////////////////////////////////////
-//
-//void loop() {
-//
-//    SEA_StateMachine.runSEAStateMachine();
-//
-//}
+#include "../lib/SEAStateMachine/SEAStateMachine.h"
 
-
-#include "../lib/multiDofStateMachine/multiDofStateMachine.h"
-
-multiDofStateMachine MultiDof_StateMachine;
+SEAStateMachine SEA_StateMachine;
 //enum state tempState;
 
 
@@ -37,7 +10,8 @@ multiDofStateMachine MultiDof_StateMachine;
 
 void setup()
 {
-    MultiDof_StateMachine.MultiDof_Setup();
+    SEA_StateMachine.SEAState_Setup();
+
 }
 
 //////////////////////////////////////////////////////////////////
@@ -47,6 +21,33 @@ void setup()
 
 void loop() {
 
-    MultiDof_StateMachine.runMultiDofState();
+    SEA_StateMachine.runSEAStateMachine();
 
 }
+
+
+//#include "../lib/multiDofStateMachine/multiDofStateMachine.h"
+//
+//multiDofStateMachine MultiDof_StateMachine;
+////enum state tempState;
+//
+//
+////////////////////////////////
+//// setup
+//// initalizing all the pins and their modes
+//
+//void setup()
+//{
+//    MultiDof_StateMachine.MultiDof_Setup();
+//}
+//
+////////////////////////////////////////////////////////////////////
+////  Main loop
+//// everything happens here
+////////////////////////////////////////////////////////////////////
+//
+//void loop() {
+//
+//    MultiDof_StateMachine.runMultiDofState();
+//
+//}

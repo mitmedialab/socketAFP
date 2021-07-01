@@ -107,6 +107,7 @@ State SerialComs::generateState() {
     tempMsgState.setMove(move);
     tempMsgState.goToGlobalPos(position, pGain, iGain, dGain, 0);
     tempMsgState.initStartTime();
+    tempMsgState.setStateType(SEA);
 
     return tempMsgState;
 }
@@ -155,6 +156,21 @@ MultiState SerialComs::generateMultiState() {
 
 MultiState SerialComs::getMultiState() {
     return this->messageMultiState;
+}
+
+/*
+ * message format for when state/action is completed
+ * ideally this would be a callback function... so that it can be run automatically from
+ * the state class... but setting that up seems annoying.
+ */
+void SerialComs::sendComplete(String dofName, enum state currentState, boolean stateComplete, enum state nextState,
+        long pos) {
+    this->doc["Dof_Name"] = dofName;
+    this->doc["current_State"] = currentState;
+    this->doc["state_complete"] = stateComplete;
+    this->doc["next_state"] = nextState;
+    this->doc["position"] = pos;
+    sendJson();
 }
 
 

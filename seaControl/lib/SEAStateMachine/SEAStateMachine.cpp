@@ -6,7 +6,10 @@
 
 State SEAStateMachine::SEAState_Setup(){
     SEAstate.setState( inSetup);
+    SEAstate.setStateType(SEA);
+
     Serial.begin(115200);
+    Serial.println("online");
 
     seaParams.yEnc.setInitConfig();
     seaParams.yEnc.init();
@@ -40,6 +43,7 @@ State SEAStateMachine::SEAState_Setup(){
 
     SEAMotor.motorControlInit(seaParams.yPWM, seaParams.yEnable, seaParams.yDirection);
     SEAOutgoing.generalMessage(SEAstate.getState(), "end setup");
+    return SEAstate;
 }
 
 /*
@@ -199,9 +203,12 @@ State SEAStateMachine::SEAState_GoToPos(unsigned long loopStartTime) {
      * TODO make this based on unchanging encoder value.
      */
     if(stateTime > 1000 ){
+        SEAOutgoing.sendComplete(tempState.getStateTypeString(), tempState.getState(), true, stopped,
+                                 yEncPos);
         tempState.setState( stopped);
         //seaParams.stateStart = millis();
-        SEAOutgoing.generalMessage(tempState.getState(), "go to pos over");
+//        SEAOutgoing.generalMessage(tempState.getState(), "go to pos over");
+
     }
 
     return tempState;
@@ -227,7 +234,7 @@ void SEAStateMachine::runSEAStateMachine() {
 
     if(seaParams.SEAencOld != this->SEAEncPos){
         seaParams.SEAencOld = this->SEAEncPos;
-        SEAOutgoing.generalMessage(this->SEAstate.getState(), String(SEAEncPos), "SEA position");
+//        SEAOutgoing.generalMessage(this->SEAstate.getState(), String(SEAEncPos), "SEA position");
 
     }
 

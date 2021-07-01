@@ -7,6 +7,7 @@
 
 #include "Arduino.h"
 
+
 enum state {
     inSetup,    // 0
     stopped,  // 1
@@ -39,6 +40,7 @@ class State {
 private:
     enum state myState;
     enum stateType myStateType;
+    String stateTypeString;
     long SEADestinationPosition;
     long globalDestinationPosition;
     bool move;
@@ -47,7 +49,7 @@ private:
     int zTranslateDestination;
     int zRotateDestination;
     int alphaRotateDestination;
-
+    long currentPosition;
 public:
     void setState(enum state setState);
     void goToGlobalPos(long position, float pGain, float iGain, float dGain, int baseSpeed);
@@ -64,6 +66,11 @@ public:
     void initStartTime();
     void setStateType(enum stateType setStateType);
     boolean stateChange = false;
+    void setCurrentPosition(long pos);
+    String getStateTypeString();
+
+
+
 
 //    void getMultiDest();
 //    void setMultiDest(int dest);

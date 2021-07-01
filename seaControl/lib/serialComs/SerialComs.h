@@ -22,6 +22,8 @@ public:
     void motorState(enum state currentState, long encoderVal, long error, int setPWM, int pTerm, double pError, int dTerm,
             double dError, int iTerm, double iError);
     void generalMessage(enum state currentState, String message, String message2 = "");
+    void sendComplete(String dofName, enum state currentState, boolean stateComplete, enum state nextState,
+            long pos = 0);
     void sendJson();
     State getState();
     MultiState getMultiState();

@@ -6,9 +6,10 @@
 
 
 void State::setState(enum state setState) {
-    if(setState != this->myState || this->myState == NULL){
+    if(setState != this->myState ){
         this->stateStartTime = millis();
         this->stateChange = true;
+
     }
 
     this->myState = setState;
@@ -69,6 +70,38 @@ enum stateType State::getStateType() {
 
 void State::setStateType(enum stateType setStateType) {
     this->myStateType = setStateType;
+    /*
+     * create string version... this is kinda gross
+     */
+    switch (setStateType) {
+        case SEA:
+            this->stateTypeString = "SEA";
+            break;
+        case multiDof:
+            this->stateTypeString = "MultiDof";
+            break;
+        case zHorizontal:
+            this->stateTypeString = "zHorizontal";
+            break;
+        case zRotate:
+            this->stateTypeString = "zRotate";
+            break;
+        case alphaRotate:
+            this->stateTypeString = "alphaRotate";
+            break;
+        case multiState:
+            this->stateTypeString = "multiState";
+            break;
+    }
 }
+
+void State::setCurrentPosition(long pos) {
+    this->currentPosition = pos;
+}
+
+String State::getStateTypeString() {
+    return this->stateTypeString;
+}
+
 
 

@@ -10,6 +10,7 @@
 State multiDofStateMachine::MultiDof_Setup() {
 
     Serial.begin(115200);
+
     Serial8.begin(9600);
     Wire.begin();
     mParams.tic1.haltAndSetPosition(0);
@@ -90,7 +91,12 @@ State multiDofStateMachine::ZTranslate_gotToPos() {
         {
             mParams.tic1.resetCommandTimeout();
         } while ((uint32_t)(millis() - start) <= 100);
+
+        tempState.setCurrentPosition(mParams.tic1.getCurrentPosition());
+//    MultiDofOutgoing.sendComplete(tempState.getStateTypeString(), tempState.getState(), true, idle,
+//                                  mParams.tic1.getCurrentPosition() );
         tempState.setState(idle);
+
     }
     return tempState;
 }
@@ -242,7 +248,7 @@ void multiDofStateMachine::runMultiDofState() {
 
     this->runZtranslateStateMachine();
     this->runZrotateStateMachine();
-    this->runAlphaRotateStateMachine(); 
+    this->runAlphaRotateStateMachine();
 
 }
 
