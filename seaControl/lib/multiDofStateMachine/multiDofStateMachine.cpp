@@ -93,8 +93,8 @@ State multiDofStateMachine::ZTranslate_gotToPos() {
         } while ((uint32_t)(millis() - start) <= 100);
 
         tempState.setCurrentPosition(mParams.tic1.getCurrentPosition());
-//    MultiDofOutgoing.sendComplete(tempState.getStateTypeString(), tempState.getState(), true, idle,
-//                                  mParams.tic1.getCurrentPosition() );
+    MultiDofOutgoing.sendComplete(tempState.getStateTypeString(), tempState.getState(), true, idle,
+                                  mParams.tic1.getCurrentPosition() );
         tempState.setState(idle);
 
     }
@@ -130,6 +130,8 @@ State multiDofStateMachine::ZRotate_goToPos() {
         {
             mParams.tic2.resetCommandTimeout();
         } while ((uint32_t)(millis() - start) <= 100);
+        MultiDofOutgoing.sendComplete(tempState.getStateTypeString(), tempState.getState(), true, idle,
+                                      mParams.tic2.getCurrentPosition() );
         tempState.setState(idle);
     }
     return tempState;
@@ -229,6 +231,9 @@ void multiDofStateMachine::runAlphaRotateStateMachine() {
         case GoToPos:
             long pos = alphaTempState.getGlobalDest();
             mParams.alphaServo.setTarget(5,pos);
+            MultiDofOutgoing.sendComplete(alphaTempState.getStateTypeString(), alphaTempState.getState(),
+                                          true, idle,
+                                          pos);
             alphaTempState.setState(idle);
             this->myMultiState.setAState(alphaTempState);
 
