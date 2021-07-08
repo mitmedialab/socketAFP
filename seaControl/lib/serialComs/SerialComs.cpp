@@ -45,7 +45,7 @@ void SerialComs::readIncomingJson(){
         Serial.println(error.f_str());
         return;
     }
-    enum stateType incomingTemp = (incoming["stateType"][0]);
+    enum stateType incomingTemp = (incoming["stateType"]);
     if(incomingTemp == SEA ){
         this->messageState = this->generateState();
     }

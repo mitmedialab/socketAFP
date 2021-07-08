@@ -16,6 +16,7 @@ class Messages:
         self.move_z = False
         self.rotate_z = False
         self.rotate_alpha = False
+        self.startLayup = False
 
         self.pGain = None
         self.dGain = None
@@ -30,21 +31,27 @@ class Messages:
 
     def gui_update_y_position(self, y_pos: str):
         self.go_y_position = self.input_to_int(y_pos)
-
+        self.move_y = False if self.go_y_position is None else True
         # convert the number to negative number
-        if self.go_y_position > 0:
+        if self.move_y is True and self.go_y_position > 0:
             self.go_y_position = self.go_y_position * -1
 
-        self.move_y = False if self.go_y_position is None else True
         self.state = State.GoToPos if self.move_y else State.idle
 
+        # the following line overwrites the y position info
+        # sets the state to preplacement, which will ignore the gotopos
+        # todo, make this its own function.
+        self.state = State.prePlacement if self.startLayup else self.state
+        self.move_y = True if self.startLayup else self.move_y
+
+        self.stateType = StateType.SEA
     def gui_update_z_position(self, z_pos: str):
         self.go_z_position = self.input_to_int(z_pos)
         print(self.go_z_position)
         self.move_z = False if self.go_z_position is None else True
         print(self.move_z)
-        self.state = [State.GoToPos if self.move_z else State.idle]
-        self.stateType = [StateType.zHorizontal]
+        self.state = State.GoToPos if self.move_z else State.idle
+        self.stateType = StateType.zHorizontal
 
     def gui_update_z_rotation(self, z_pos: str):
         self.go_z_rotation = self.input_to_int(z_pos)

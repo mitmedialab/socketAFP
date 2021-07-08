@@ -79,12 +79,15 @@ class GuiMain:
         self.z_position_input = QLineEdit('')
         self.z_rotation_input = QLineEdit('')
         self.alpha_rotation_input = QLineEdit('')
+        self.startLayup = QRadioButton('start layup')
 
         layout = QFormLayout()
         layout.addRow("y position", self.y_position_input)
         layout.addRow("z position", self.z_position_input)
         layout.addRow("z rotation", self.z_rotation_input)
         layout.addRow("alpha rotation", self.alpha_rotation_input)
+        layout.addRow("start layup", self.startLayup)
+
 
         self.position_input.setLayout(layout)
 
@@ -141,6 +144,7 @@ class GuiMain:
         SEA_message = Messages()
         SEA_message.destination = Board.SEA
         SEA_message.gui_set_gain(p_gain, d_gain, i_gain)
+        SEA_message.startLayup = self.startLayup.isChecked()
         SEA_message.gui_update_y_position(y_position)
 
         return SEA_message
@@ -160,6 +164,7 @@ class GuiMain:
 
     def on_send_sea_click(self):
         SEA_send = self.read_sea_inputs()
+        print("read inputs")
         self.send_summary.append(SEA_send.pack_json())
         self.out_data.data.put(SEA_send)
 

@@ -84,19 +84,24 @@ State SEAStateMachine::SEAState_idle() {
 
             String checkSerAgain = String(Serial.available());
             SEAOutgoing.generalMessage(tempState.getState(), "State from incoming message");
-            SEAOutgoing.generalMessage(tempState.getState(), ("Serial available: " + checkSerAgain));
+//            SEAOutgoing.generalMessage(tempState.getState(), ("Serial available: " + checkSerAgain));
+            SEAOutgoing.sendComplete(tempState.getStateTypeString(), idle, true,
+                                     SEAIncoming.getState().getState(), this->yEncPos);
 //            printedStop = false;
 //            printedIdle = false;
             return SEAIncoming.getState();
 
         }
     }
-
+    else if( tempState.getState() == placement){
+        return tempState;
+    }
     else{
 //        State tempState = this->SEAstate;
         tempState.setState(manDrive(tempState.getState()));
         return tempState;
     }
+    return tempState;
 }
 
 /*
@@ -293,8 +298,59 @@ void SEAStateMachine::runSEAStateMachine() {
 
             break;
 
+        case prePlacement:
+            this->SEAstate = this->SEAState_prePlacement();
+            break;
+
+        case placement:
+            this->SEAstate = this->SEAState_placement(loopStartTime);
+            break;
+
     }
 
+}
 
+/*
+ * Pre-placement
+ * drive down until making contact with surface
+ * with contact create sendComplete message then switch to placement state.
+ */
+State SEAStateMachine::SEAState_prePlacement() {
+    State tempState = this->SEAstate;
+
+    SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
+    this->SEAEncPos = seaParams.SEAenc.read();
+
+    if(this->SEAEncPos > -10){
+        tempState.setState(placement);
+        SEAOutgoing.sendComplete(tempState.getStateTypeString(),tempState.getState(), false,
+                                 placement, this->SEAEncPos);
+    }
+//
+//        SEAMotor.driveYMotor(0, false, yEncPos);
+//        SEAOutgoing.sendComplete(tempState.getStateTypeString(),tempState.getState(), true,
+//                                 placement, SEAEncPos);
+//        tempState.initStartTime();
+//    }
+    Serial.println(tempState.getState());
+    return tempState;
+}
+
+State SEAStateMachine::SEAState_placement(unsigned long loopStartTime) {
+    State tempState = this->SEAstate;
+
+    SEAEncPos = seaParams.SEAenc.read();
+    tempState.setState( SEAMotor.pdControl(-1500, this->SEAEncPos, loopStartTime,
+                                           manDownSpeed, tempState.getState()));
+//    SEAOutgoing.generalMessage(tempState.getState(),String(SEAEncPos), "sea encoder");
+    tempState = SEAState_idle();
+
+//    if(tempState.getStateTime() > 1000){
+//        tempState.setState(idle);
+//        SEAOutgoing.sendComplete(tempState.getStateTypeString(), tempState.getState(), true, idle,
+//                                 SEAEncPos);
+//    }
+
+    return tempState;
 }
 

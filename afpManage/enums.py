@@ -19,7 +19,8 @@ class State(IntEnum):
     manUp = 7
     manDown = 8
     GoToPos = 9
-    posTwo = 10
+    prePlacement = 10
+    placement = 11
 
 
 class StateType(IntEnum):

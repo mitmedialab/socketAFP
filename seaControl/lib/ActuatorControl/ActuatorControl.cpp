@@ -12,7 +12,7 @@ void ActuatorControl::motorControlInit(uint8_t pwm, uint8_t enable, uint8_t dire
 
 }
 
-void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos) {
+void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos, boolean inPlacement) {
     int pwm;
     bool mDirection; // false is down, true is up
 
@@ -49,17 +49,19 @@ void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
 
     // slow down if its close to a button
     //
-    if(yEncoderPos > -5000 && mDirection) {
-        if(abs(motorSpeed) > abs(initUpSpeed)){
-            pwm = initUpSpeed;
-            mDirection = true;
+    if(inPlacement == false) {
+        if (yEncoderPos > -5000 && mDirection) {
+            if (abs(motorSpeed) > abs(initUpSpeed)) {
+                pwm = initUpSpeed;
+                mDirection = true;
+            }
         }
-    }
-    if(yEncoderPos < -43000 && !mDirection) {
-        if(abs(motorSpeed) > abs(10)){
-            pwm = 29;
-            mDirection = false;
+        if (yEncoderPos < -43000 && !mDirection) {
+            if (abs(motorSpeed) > abs(10)) {
+                pwm = 29;
+                mDirection = false;
 
+            }
         }
     }
 
@@ -94,8 +96,13 @@ void ActuatorControl::driveYMotor(int motorSpeed, bool enable, long yEncoderPos)
 //
 //};
 
-enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, unsigned long currentTime, int basePWM, enum state currentState) {
+enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, unsigned long currentTime, int basePWM,
+        enum state currentState) {
     enum state actuatorState;
+    boolean inPlacement = false;
+    if(currentState == placement){
+        inPlacement = true;
+    }
     //yEncPos = yEnc.read();
     pError = double(desiredPosition - yEncoderPos);
     dError = (pError - dError) /  double(currentTime);
@@ -124,9 +131,9 @@ enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, un
 //            setPWM = basePWM + 5;
 //        }
 
-        driveYMotor(setPWM, true, yEncoderPos);
+        driveYMotor(setPWM, true, yEncoderPos, inPlacement);
 
-//        outGoingMsgs.motorState(currentState, yEncoderPos, pError, setPWM, pTerm, pError, dTerm, dError, iTerm, iError);
+        outGoingMsgs.motorState(currentState, yEncoderPos, pError, setPWM, pTerm, pError, dTerm, dError, iTerm, iError);
         actuatorState = currentState;
 
     }

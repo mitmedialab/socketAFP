@@ -31,10 +31,11 @@ class ActuatorControl {
     double iError =0;
 public:
     void motorControlInit(uint8_t pwm, uint8_t enable,uint8_t direction);
-    void driveYMotor(int motorSpeed, bool enable, long yEncoderPos);
+    void driveYMotor(int motorSpeed, bool enable, long yEncoderPos, boolean inPlacement = false);
     void initYMotor();
     void setGains(double p_gain_in, double d_gain_in, double i_gain_in);
-    enum state pdControl(long desiredPosition, long yEcoderPos, unsigned long currentTime, int basePWM, enum state currentState);
+    enum state pdControl(long desiredPosition, long yEcoderPos, unsigned long currentTime, int basePWM,
+            enum state currentState);
     SerialComs outGoingMsgs;
 
 private:

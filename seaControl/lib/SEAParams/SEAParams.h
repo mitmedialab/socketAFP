@@ -32,8 +32,8 @@ public:
 
     //sea encoder pins
     const int SEAEncIndex = 32; //at 0.5 in
-    const int SEAEncA = 31;
-    const int SEAEncB = 30;
+    const int SEAEncA = 30;
+    const int SEAEncB = 31;
 
     //encoder initializations
     QuadEncoder yEnc = QuadEncoder(1, yEncA, yEncB);

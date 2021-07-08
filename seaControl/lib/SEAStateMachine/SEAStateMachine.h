@@ -31,7 +31,8 @@ public:
     State SEAState_axisInit();
     State SEAState_axisInitComplete();
     State SEAState_GoToPos(unsigned long loopStartTime);
-
+    State SEAState_prePlacement();
+    State SEAState_placement(unsigned long loopStartTime);
     void runSEAStateMachine();
 
     long yEncPos;

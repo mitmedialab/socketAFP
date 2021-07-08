@@ -21,6 +21,8 @@ enum state {
     manUp, // 7
     manDown, //8
     GoToPos, // 9
+    prePlacement, // 10
+    placement,     //11
     anotherState
 //    posTwo
 
