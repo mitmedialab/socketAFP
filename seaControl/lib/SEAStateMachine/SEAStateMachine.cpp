@@ -41,7 +41,10 @@ State SEAStateMachine::SEAState_Setup(){
 
     SEAstate.setState( stopped);
 
+
     SEAMotor.motorControlInit(seaParams.yPWM, seaParams.yEnable, seaParams.yDirection);
+    CompactionControl.motorControlInit(seaParams.yPWM, seaParams.yEnable, seaParams.yDirection);
+    CompactionControl.setGains(seaParams.compaction_pGain, seaParams.compaction_dGain, seaParams.compaction_iGain);
     SEAOutgoing.generalMessage(SEAstate.getState(), "end setup");
     return SEAstate;
 }
@@ -174,6 +177,7 @@ State SEAStateMachine::SEAState_axisInitComplete() {
     delay(100);
     seaParams.firstInit = true;
     seaParams.yEnc.write(0);
+    seaParams.SEAenc.write(0);
     delay(100);
     SEAMotor.driveYMotor(manDownSpeed, true, yEncPos);
     this->yEncPos = seaParams.yEnc.read();
@@ -338,9 +342,9 @@ State SEAStateMachine::SEAState_prePlacement() {
 
 State SEAStateMachine::SEAState_placement(unsigned long loopStartTime) {
     State tempState = this->SEAstate;
-
+//    CompactionControl.setGains(tempState.p_Gain, tempState.d_Gain, tempState.i_Gain);
     SEAEncPos = seaParams.SEAenc.read();
-    tempState.setState( SEAMotor.pdControl(-1500, this->SEAEncPos, loopStartTime,
+    tempState.setState( CompactionControl.pdControl(-1500, this->SEAEncPos, loopStartTime,
                                            manDownSpeed, tempState.getState()));
 //    SEAOutgoing.generalMessage(tempState.getState(),String(SEAEncPos), "sea encoder");
     tempState = SEAState_idle();

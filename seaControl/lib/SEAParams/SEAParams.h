@@ -15,6 +15,10 @@ public:
     const uint8_t  yEnable = 24;
     const uint8_t  yDirection = 12;
 
+    const float compaction_pGain = 0.021;
+    const float compaction_iGain = 0.023;
+    const float compaction_dGain = 200;
+
     // limit switch pins
     //const int yUpLimitButtonPin = 15;
     //const int yDownLimitButtonPin = 16;
@@ -59,6 +63,7 @@ public:
         float pwm;
 
     };
+
 };
 
 

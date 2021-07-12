@@ -106,15 +106,21 @@ enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, un
     //yEncPos = yEnc.read();
     pError = double(desiredPosition - yEncoderPos);
     dError = (pError - dError) /  double(currentTime);
-    iError = (pError + iError) * currentTime;
-    if(abs(iError) > 2000){
-        if(iError > 0){
-            iError = 2000;
-        }
-        else{
-            iError = -2000;
-        }
+    iError = (pError + iError);
+    if(iError > 2000){
+        iError = 2000;
     }
+    else if(iError < -2000){
+        iError = -2000;
+    }
+//    if(abs(iError) > 2000){
+//        if(iError > 0){
+//            iError = 2000;
+//        }
+//        else{
+//            iError = -2000;
+//        }
+//    }
     int setPWM =0;
 
     if(true){
@@ -133,7 +139,7 @@ enum state ActuatorControl::pdControl(long desiredPosition, long yEncoderPos, un
 
         driveYMotor(setPWM, true, yEncoderPos, inPlacement);
 
-        outGoingMsgs.motorState(currentState, yEncoderPos, pError, setPWM, pTerm, pError, dTerm, dError, iTerm, iError);
+//        outGoingMsgs.motorState(currentState, yEncoderPos, pError, setPWM, pTerm, pError, dTerm, dError, iTerm, iError);
         actuatorState = currentState;
 
     }

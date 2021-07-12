@@ -18,6 +18,9 @@ void State::setState(enum state setState) {
 
 void State::goToGlobalPos(long position, float pGain, float iGain, float dGain, int baseSpeed) {
     this->globalDestinationPosition = position;
+    this->p_Gain = pGain;
+    this->i_Gain = iGain;
+    this->d_Gain = dGain;
 }
 
 void State::goToSEAPos(long position, float pGain, float iGain, float dGain, int baseSpeed) {

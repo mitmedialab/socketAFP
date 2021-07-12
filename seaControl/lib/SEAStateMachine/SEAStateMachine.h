@@ -20,8 +20,8 @@ public:
     SerialComs SEAOutgoing;
     SEAParams seaParams;
     State SEAstate;
-    ActuatorControl SEAMotor;
-
+    ActuatorControl SEAMotor; // shouldn't have used SEA in the name for this... motor control object for when not using the Series elastic spring
+    ActuatorControl CompactionControl; // motor control object for when using the Series elastic spring
     State SEAState_Setup();
     State SEAState_stopped();
     State SEAState_idle();

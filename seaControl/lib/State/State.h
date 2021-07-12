@@ -70,6 +70,9 @@ public:
     boolean stateChange = false;
     void setCurrentPosition(long pos);
     String getStateTypeString();
+    float p_Gain;
+    float i_Gain;
+    float d_Gain;
 
 
 
